@@ -1,5 +1,4 @@
 package com.example.dream_games_demo.model;
-import com.example.dream_games_demo.model.Country;
 import jakarta.persistence.*;
 
 @Entity
@@ -9,7 +8,7 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "string default X")
+    @Column(columnDefinition = "VARCHAR(255) default 'X'")
     private String user_name;
 
     @Column(columnDefinition = "bigint default 1")
@@ -27,17 +26,17 @@ public class Player {
     @Column(columnDefinition = "bigint default 0")
     private Long group_score;
 
-    public Player(String user_name) {
-        this.user_name = user_name;
-        this.coins = 5000L;
-        this.level = 1L;
-        this.can_enter = true;
-    }
     public Player() {
         this.user_name = "X";
         this.coins = 5000L;
         this.level = 1L;
         this.can_enter = false;
+    }
+    public Player(String user_name) {
+        this.user_name = user_name;
+        this.coins = 5000L;
+        this.level = 1L;
+        this.can_enter = true;
     }
     public void setUserName(String user_name) { this.user_name = user_name; }
     public String getUserName() { return this.user_name; }

@@ -13,14 +13,11 @@ public class Country {
 
     private String name;
 
-    @OneToMany(mappedBy = "country")
-    private List<Player> player;
-
     @Override
     public String toString(){
         return "Country {id: " + id + ", name: " + name + "}";
     }
 
-    public String getName() { return this.name == null ? "" : this.name; }
     // Getters and setters
+    public String getName() { return this.name == null ? "" : this.name; }
 }

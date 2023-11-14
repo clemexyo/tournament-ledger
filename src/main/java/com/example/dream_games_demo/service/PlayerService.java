@@ -82,7 +82,7 @@ public class PlayerService {
         Optional<Player> optionalPlayer = playerRepository.findById(id);
         if(optionalPlayer.isPresent()){
             Player player = optionalPlayer.get();
-            if(player.getCan_enter()){
+            if(player.getCan_enter() && player.getCoins() >= 1000 && player.getLevel() >= 20){
                 message = "Can enter";
                 httpStatus = HttpStatus.OK;
             }
