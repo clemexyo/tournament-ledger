@@ -2,6 +2,7 @@ package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.exceptions.UnableToAddPlayerToGroupException;
 import com.example.dream_games_demo.model.Player;
+import com.example.dream_games_demo.model.Rewards;
 import com.example.dream_games_demo.model.Tournament;
 import com.example.dream_games_demo.model.TournamentGroup;
 import com.example.dream_games_demo.repository.PlayerRepository;
@@ -22,6 +23,8 @@ public class TournamentGroupService {
     private TournamentGroupsRepository tournamentGroupsRepository;
     @Autowired
     private PlayerService playerService;
+    @Autowired
+    private RewardsService rewardsService;
 
     public Optional<List<TournamentGroup>> findPendingTournamentGroups(){
         return tournamentGroupsRepository.findPendingTournamentGroups();
@@ -33,8 +36,9 @@ public class TournamentGroupService {
             playerService.playerEnteredGroup(player.getId());
             tournamentGroupsRepository.save(tournamentGroup);
             leaderBoard = "Player assigned to a new tournament group. Currently waiting for other players to join.\n" +
-                    "Current status of the board: ";
-            //generate leader board here
+                    "Current status of the board:\n";
+            rewardsService.createReward(player, latest_tournament, tournamentGroup);
+            leaderBoard += generateLeaderBoard(tournamentGroup);
         }
         catch (IllegalStateException e){
             //for some reason the player could not be added to the newly created tournament group instance
@@ -53,9 +57,15 @@ public class TournamentGroupService {
                     addPlayer(player, currentGroup);
                     if(currentGroup.isReadyToStart()){
                         currentGroup.setIsActive(true);
-                        tournamentGroupsRepository.save(currentGroup);
-                        leaderBoard = "added the player to the tournament group, generate the leaderboard now.";
+                        leaderBoard = "The group is ready to start the game!\n";
                     }
+                    else{
+                        leaderBoard = "The group is not yet ready to start.\nCurrent board:\n" + generateLeaderBoard(currentGroup);
+                    }
+                    tournamentGroupsRepository.save(currentGroup);
+                    rewardsService.createReward(player, latest_tournament, currentGroup);
+                    leaderBoard = generateLeaderBoard(currentGroup);
+                    break;
                 }
                 catch (IllegalStateException e){
                     //No empty column available to assign the player.
@@ -71,6 +81,22 @@ public class TournamentGroupService {
             }
         }
         return leaderBoard;
+    }
+    public String generateLeaderBoard(TournamentGroup tournamentGroup){
+        List<Rewards> playersOrderedByGroupScore = rewardsService.orderedPlayers(tournamentGroup);
+        StringBuilder leaderBoard = new StringBuilder("Players from highest score to lowest:\n");
+
+        for(Rewards currentInstance: playersOrderedByGroupScore){
+            Long player_id = currentInstance.getPlayer().getId();
+            String player_name = currentInstance.getPlayer().getUserName();
+            String player_country = currentInstance.getPlayer().getCountry();
+            Long current_score = currentInstance.getScore();
+
+            leaderBoard.append("--- ").append(player_id).append(", ").append(player_name)
+                    .append(", ").append(player_country).append(", ")
+                    .append(current_score).append(" ---\n");
+        }
+        return leaderBoard.toString();
     }
     private Boolean uniqueCountry(Player player, TournamentGroup currentGroup){
         String newPlayerCountry = player.getCountry();

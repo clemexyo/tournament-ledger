@@ -75,9 +75,6 @@ public class TournamentGroup {
         this.total_group_score = 0L;
         this.tournament = latest_tournament;
     }
-    public String currentBoard(){
-        return "to be implemented";
-    }
     public void addPlayer(Player player){
         if(player1 == null){
             this.player1 = player;
@@ -121,4 +118,5 @@ public class TournamentGroup {
     public void setIsActive(boolean updated_is_active){
         this.is_active = updated_is_active;
     }
+    public Long getId() { return this.id; }
 }

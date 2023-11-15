@@ -10,7 +10,7 @@ public class Rewards {
     private Long id;
 
     @Column(columnDefinition = "bigint default 0")
-    private Long amount;
+    private Long player_score;
 
     @ManyToOne
     @JoinColumn(name = "player_id")
@@ -28,7 +28,7 @@ public class Rewards {
     private Boolean is_claimed;
     public Rewards() {
         this.player = null;
-        this.amount = 0L;
+        this.player_score = 0L;
         this.tournament = null;
         this.tournament_group = null;
         this.is_claimed = false;
@@ -38,6 +38,8 @@ public class Rewards {
         this.tournament = tournament;
         this.tournament_group = tournament_group;
         this.is_claimed = false;
-        this.amount = 0L;
+        this.player_score = 0L;
     }
+    public Player getPlayer() { return this.player; }
+    public Long getScore() { return this.player_score; }
 }
