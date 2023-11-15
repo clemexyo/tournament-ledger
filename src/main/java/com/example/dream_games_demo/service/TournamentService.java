@@ -11,10 +11,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
-import java.util.List;
-import java.util.Map;
-import java.util.Optional;
+import java.util.*;
 
 @Service
 public class TournamentService {
@@ -25,33 +22,22 @@ public class TournamentService {
     @Autowired
     private TournamentGroupService tournamentGroupService;
 
-    public Map<String, Object> tournamentStatus(){
-        String message = "";
-        HttpStatus httpStatus = HttpStatus.OK;
-
+    public List<Object> tournamentStatus(){
+        boolean valid_tournament = false;
         Optional<Tournament> optionalTournament = tournamentRepository.findTopByOrderByIdDesc();
-        Tournament tournament = null;
         if(optionalTournament.isPresent()){
-            tournament = optionalTournament.get();
+            Tournament tournament = optionalTournament.get();
             if(tournament.getisActive()){
-                message = "Valid Tournament";
-                httpStatus = HttpStatus.OK;
+                valid_tournament = true;
             }
             else{
-                message = "Tournament is not active";
-                httpStatus = HttpStatus.BAD_REQUEST;
+               //tournament not active exception
             }
         }
         else{
-            message = "Tournament not found";
-            httpStatus = HttpStatus.BAD_REQUEST;
+            //tournament not found exception
         }
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", message);
-        map.put("httpStatus", httpStatus);
-        map.put("latest_tournament", tournament);
-        return map;
+        return Arrays.asList(valid_tournament, optionalTournament.get());
     }
     public Map<String, Object> enterTournament(Long playerId, Tournament latest_tournament){
         String message = "";

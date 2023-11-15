@@ -17,6 +17,7 @@ import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
 
 import java.util.HashMap;
+import java.util.List;
 import java.util.Map;
 
 @RestController
@@ -35,29 +36,15 @@ public class TournamentController {
         }
         Long player_id = request.getPlayerId();
 
-        String message = "";
-        HttpStatus httpStatus = HttpStatus.OK;
+        boolean playerStatus = playerService.playerStatus(player_id);
 
-        Map<String, Object> playerStatus = playerService.playerStatus(player_id);
-
-        if(playerStatus.get("message") == "Can enter"){
-            Map<String, Object> tournamentStatus = tournamentService.tournamentStatus();
-            if(tournamentStatus.get("message") == "Valid Tournament"){
-                Map<String, Object> result = tournamentService.enterTournament(player_id, (Tournament) tournamentStatus.get("latest_tournament"));
-                message = (String) result.get("message");
-                httpStatus = (HttpStatus) result.get("httpStatus");
-            }
-            else{
-                message = (String) tournamentStatus.get("message");
-                httpStatus = (HttpStatus) tournamentStatus.get("httpStatus");
+        if(playerStatus){
+            List<Object> tournamentStatus = tournamentService.tournamentStatus();
+            if((Boolean) tournamentStatus.get(0)){
+                //boolean result = tournamentService.enterTournament(player_id, (Tournament) tournamentStatus.get(1));
             }
         }
-        else{
-            message = (String) playerStatus.get("message");
-            httpStatus = (HttpStatus) playerStatus.get("httpStatus");
-        }
-
-        return new ResponseEntity<String>(message, httpStatus);
+        return new ResponseEntity<String>("Successful", HttpStatus.OK);
 
     }
 }

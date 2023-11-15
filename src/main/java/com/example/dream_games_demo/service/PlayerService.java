@@ -2,6 +2,7 @@ package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.exceptions.CreatePlayerException;
 import com.example.dream_games_demo.exceptions.NoPlayerFoundException;
+import com.example.dream_games_demo.exceptions.PlayerNotFoundException;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.repository.CountryRepository;
@@ -83,30 +84,22 @@ public class PlayerService {
         }
     }
 
-    public Map<String, Object> playerStatus(Long id){
-        String message = "";
-        HttpStatus httpStatus = HttpStatus.OK;
-
+    public boolean playerStatus(Long id){
+        boolean can_enter = false;
         Optional<Player> optionalPlayer = playerRepository.findById(id);
         if(optionalPlayer.isPresent()){
             Player player = optionalPlayer.get();
             if(player.getCan_enter() && player.getCoins() >= 1000 && player.getLevel() >= 20){
-                message = "Can enter";
-                httpStatus = HttpStatus.OK;
+                can_enter = true;
             }
-            else{
-                message = "Player cannot enter";
-                httpStatus = HttpStatus.BAD_REQUEST;
+            else {
+                //player cannot enter exception
             }
         }
         else{
-            message = "Player not found";
-            httpStatus = HttpStatus.BAD_REQUEST;
+           throw new PlayerNotFoundException();
         }
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", message);
-        map.put("httpStatus", httpStatus);
-        return map;
+        return can_enter;
     }
 
     public void playerEnteredGroup(Long id){
