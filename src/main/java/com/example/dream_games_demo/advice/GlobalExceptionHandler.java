@@ -31,6 +31,8 @@ public class GlobalExceptionHandler {
     private String playerCannotEnterTournament;
     @Value("${error.messages.tournamentNotActiveMessage}")
     private String tournamentNotActiveMessage;
+    @Value("${error.messages.tournamentNotFoundMessage}")
+    private String tournamentNotFoundMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -71,6 +73,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TournamentNotActiveException.class)
     public ResponseEntity<String> handleTournamentNotActiveException(TournamentNotActiveException e) {
         return new ResponseEntity<>(tournamentNotActiveMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(TournamentNotFoundException.class)
+    public ResponseEntity<String> handleTournamentNotFoundException(TournamentNotFoundException e) {
+        return new ResponseEntity<>(tournamentNotFoundMessage, HttpStatus.NOT_FOUND);
     }
 }
 

@@ -1,6 +1,7 @@
 package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.exceptions.TournamentNotActiveException;
+import com.example.dream_games_demo.exceptions.TournamentNotFoundException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Tournament;
 import com.example.dream_games_demo.model.TournamentGroup;
@@ -36,15 +37,13 @@ public class TournamentService {
             }
         }
         else{
-            //tournament not found exception
+            throw new TournamentNotFoundException();
         }
         return Arrays.asList(valid_tournament, optionalTournament.get());
     }
-    public Map<String, Object> enterTournament(Long playerId, Tournament latest_tournament){
-        String message = "";
-        HttpStatus httpStatus = HttpStatus.OK;
-
+    public String enterTournament(Long playerId, Tournament latest_tournament){
         Optional<List<TournamentGroup>> optionalPendingTournamentGroups = tournamentGroupService.findPendingTournamentGroups();
+        String leaderBoard = "";
 
         //at this point we know the player that sent the request is valid
         Player player = playerService.findPlayerById(playerId).get();
@@ -59,14 +58,8 @@ public class TournamentService {
             //we will create a new TournamentGroup instance and assign the player there in which
             //the player can wait for other players to join the group and start the game.
             Map<String, Object> currentStatus = tournamentGroupService.createGroupAndAssignPlayer(player, latest_tournament);
-            message = (String) currentStatus.get("message");
-            httpStatus = (HttpStatus) currentStatus.get("httpStatus");
         }
-
-        Map<String, Object> map = new HashMap<>();
-        map.put("message", message);
-        map.put("httpStatus", httpStatus);
-        return map;
+        return leaderBoard;
     }
 
     @Scheduled(cron = "0 0 0 * * *")

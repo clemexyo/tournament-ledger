@@ -35,16 +35,16 @@ public class TournamentController {
             throw new InvalidEnterTournamentRequestException();
         }
         Long player_id = request.getPlayerId();
-
+        String leaderBoard = "";
         boolean playerStatus = playerService.playerStatus(player_id);
 
         if(playerStatus){
             List<Object> tournamentStatus = tournamentService.tournamentStatus();
             if((Boolean) tournamentStatus.get(0)){
-                //boolean result = tournamentService.enterTournament(player_id, (Tournament) tournamentStatus.get(1));
+                leaderBoard = tournamentService.enterTournament(player_id, (Tournament) tournamentStatus.get(1));
             }
         }
-        return new ResponseEntity<String>("Successful", HttpStatus.OK);
+        return new ResponseEntity<String>(leaderBoard, HttpStatus.OK);
 
     }
 }
