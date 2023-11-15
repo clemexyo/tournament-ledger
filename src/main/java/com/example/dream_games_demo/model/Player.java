@@ -8,7 +8,6 @@ public class Player {
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(columnDefinition = "VARCHAR(255) default 'X'")
     private String user_name;
 
     @Column(columnDefinition = "bigint default 1")
@@ -23,9 +22,6 @@ public class Player {
     @JoinColumn(name = "country_id")
     private Country country;
 
-    @Column(columnDefinition = "bigint default 0")
-    private Long group_score;
-
     public Player() {
         this.user_name = "X";
         this.coins = 5000L;
@@ -38,7 +34,7 @@ public class Player {
         this.level = 1L;
         this.can_enter = true;
     }
-    public void setUserName(String user_name) { this.user_name = user_name; }
+
     public String getUserName() { return this.user_name; }
     public Long getId(){ return this.id; }
     public void setCountry(Country country){
@@ -61,7 +57,7 @@ public class Player {
     public void setCan_enter(Boolean updatedCan_enter) { this.can_enter = updatedCan_enter; }
     @Override
     public String toString(){
-        return "Player {user_name: " + user_name + ", id: " + id + ", leve: " + level + ", coins: " + coins + ", country: " + country + ", can_enter: " + can_enter + "}";
+        return "{user_name: " + user_name + ", id: " + id + ", leve: " + level + ", coins: " + coins + ", country: " + country + ", can_enter: " + can_enter + "}";
     }
 }
 

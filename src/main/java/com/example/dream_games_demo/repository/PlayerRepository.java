@@ -11,8 +11,5 @@ import java.util.Optional;
 @Repository
 public interface PlayerRepository extends JpaRepository<Player, Long> {
 
-    @Query("SELECT CONCAT(' {user_name=', p.user_name, ' id=', p.id, ', level=', p.level, ', coins=', p.coins, ', can_enter=', p.can_enter, ', country=', p.country, ' }') FROM Player p")
-    List<String> findAllPlayers();
-
-    Optional<Player> findById(Long id);
+    //Optional<Player> findById(Long id);
 }

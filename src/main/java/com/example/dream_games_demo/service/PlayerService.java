@@ -2,22 +2,16 @@ package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
-
-import com.example.dream_games_demo.model.Tournament;
 import com.example.dream_games_demo.repository.CountryRepository;
 import com.example.dream_games_demo.repository.PlayerRepository;
 import com.example.dream_games_demo.repository.TournamentGroupsRepository;
 import com.example.dream_games_demo.repository.TournamentRepository;
-import com.fasterxml.jackson.core.JsonGenerationException;
-import com.fasterxml.jackson.core.JsonProcessingException;
-import com.fasterxml.jackson.databind.JsonMappingException;
-import com.fasterxml.jackson.databind.ObjectMapper;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import java.util.*;
-import java.util.stream.Collectors;
+
 
 @Service
 public class PlayerService {
@@ -35,11 +29,17 @@ public class PlayerService {
     private TournamentGroupsRepository tournamentGroupsRepository;
 
     public List<String> allPlayers(){
-        return playerRepository.findAllPlayers();
+        List<Player> playersObjectList = playerRepository.findAll();
+        List<String> playersStringList = new ArrayList<String>();
+        for (Player currentPlayer : playersObjectList) {
+            playersStringList.add(currentPlayer.toString());
+        }
+        return playersStringList;
     }
 
     public Optional<Player> findPlayerById(Long id){
         return playerRepository.findById(id);
+
     }
 
     public String createPlayer(String user_name){

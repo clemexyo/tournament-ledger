@@ -24,7 +24,8 @@ public class PlayerController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createPlayer(@RequestBody String user_name){
+    public ResponseEntity<String> createPlayer(@RequestBody Map<String, Object> requestBody){
+        String user_name = (String) requestBody.get("user_name");
         String createdPlayer = playerService.createPlayer(user_name);
         return new ResponseEntity<String>(createdPlayer, HttpStatus.CREATED);
     }
