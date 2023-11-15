@@ -20,6 +20,8 @@ public class GlobalExceptionHandler {
     private String noPlayerFoundMessage;
     @Value("${error.messages.createPlayerExceptionMessage}")
     private String createPlayerExceptionMessage;
+    @Value("${error.messages.createCountryExceptionMessage}")
+    private String createCountryExceptionMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -40,6 +42,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CreatePlayerException.class)
     public ResponseEntity<String> handleCreatePlayerException(CreatePlayerException e) {
         return new ResponseEntity<>(createPlayerExceptionMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CreateCountryException.class)
+    public ResponseEntity<String> handleCreateCountryException(CreateCountryException e){
+        return new ResponseEntity<>(createCountryExceptionMessage, HttpStatus.BAD_REQUEST);
     }
 }
 
