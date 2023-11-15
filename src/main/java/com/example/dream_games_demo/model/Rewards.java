@@ -24,20 +24,16 @@ public class Rewards {
     @JoinColumn(name = "tournament_group_id")
     private TournamentGroup tournament_group;
 
-    @Column(columnDefinition = "boolean default false")
-    private Boolean is_claimed;
     public Rewards() {
         this.player = null;
         this.player_score = 0L;
         this.tournament = null;
         this.tournament_group = null;
-        this.is_claimed = false;
     }
     public Rewards(Player player, Tournament tournament, TournamentGroup tournament_group) {
         this.player = player;
         this.tournament = tournament;
         this.tournament_group = tournament_group;
-        this.is_claimed = false;
         this.player_score = 0L;
     }
     public Player getPlayer() { return this.player; }

@@ -41,25 +41,24 @@ public class TournamentService {
         }
         return Arrays.asList(valid_tournament, optionalTournament.get());
     }
-    public String enterTournament(Long playerId, Tournament latest_tournament){
+    public TournamentGroup enterTournament(Long playerId, Tournament latest_tournament){
         Optional<List<TournamentGroup>> optionalPendingTournamentGroups = tournamentGroupService.findPendingTournamentGroups();
-        String leaderBoard = "";
-
+        TournamentGroup to_return = null;
         //at this point we know the player that sent the request is valid
         Player player = playerService.findPlayerById(playerId).get();
         if(!optionalPendingTournamentGroups.get().isEmpty()){
             List<TournamentGroup> pendingTournamentGroups = optionalPendingTournamentGroups.get();
 
             //here we know that there is at least one available tournament group.
-            leaderBoard = tournamentGroupService.assignPlayerToAvailableGroup(player, pendingTournamentGroups, latest_tournament);
+            to_return = tournamentGroupService.assignPlayerToAvailableGroup(player, pendingTournamentGroups, latest_tournament);
         }
         else{
             //Since there are either no available groups or no groups at all,
             //we will create a new TournamentGroup instance and assign the player there in which
             //the player can wait for other players to join the group and start the game.
-            leaderBoard = tournamentGroupService.createGroupAndAssignPlayer(player, latest_tournament);
+            to_return = tournamentGroupService.createGroupAndAssignPlayer(player, latest_tournament);
         }
-        return leaderBoard;
+        return to_return;
     }
 
     @Scheduled(cron = "0 0 0 * * *")

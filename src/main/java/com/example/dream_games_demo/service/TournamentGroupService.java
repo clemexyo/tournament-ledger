@@ -29,16 +29,14 @@ public class TournamentGroupService {
     public Optional<List<TournamentGroup>> findPendingTournamentGroups(){
         return tournamentGroupsRepository.findPendingTournamentGroups();
     }
-    public String createGroupAndAssignPlayer(Player player, Tournament latest_tournament){
-        String leaderBoard = "";
+    public TournamentGroup createGroupAndAssignPlayer(Player player, Tournament latest_tournament){
+        TournamentGroup to_return = null;
         try{
             TournamentGroup tournamentGroup = new TournamentGroup(player, latest_tournament);
             playerService.playerEnteredGroup(player.getId());
             tournamentGroupsRepository.save(tournamentGroup);
-            leaderBoard = "Player assigned to a new tournament group. Currently waiting for other players to join.\n" +
-                    "Current status of the board:\n";
             rewardsService.createReward(player, latest_tournament, tournamentGroup);
-            leaderBoard += generateLeaderBoard(tournamentGroup);
+            to_return = tournamentGroup;
         }
         catch (IllegalStateException e){
             //for some reason the player could not be added to the newly created tournament group instance
@@ -46,25 +44,23 @@ public class TournamentGroupService {
             //be coming to here as previous checks are sufficient.
             throw new UnableToAddPlayerToGroupException();
         }
-        return leaderBoard;
+        return to_return;
     }
 
-    public String assignPlayerToAvailableGroup(Player player, List<TournamentGroup> pendingTournamentGroups, Tournament latest_tournament){
-        String leaderBoard = "";
+    public TournamentGroup assignPlayerToAvailableGroup(Player player, List<TournamentGroup> pendingTournamentGroups, Tournament latest_tournament){
+        TournamentGroup to_return = null;
+        boolean placed = false;
         for (TournamentGroup currentGroup: pendingTournamentGroups){
             if(uniqueCountry(player, currentGroup)){
                 try {
                     addPlayer(player, currentGroup);
                     if(currentGroup.isReadyToStart()){
                         currentGroup.setIsActive(true);
-                        leaderBoard = "The group is ready to start the game!\n";
+                        tournamentGroupsRepository.save(currentGroup);
                     }
-                    else{
-                        leaderBoard = "The group is not yet ready to start.\nCurrent board:\n" + generateLeaderBoard(currentGroup);
-                    }
-                    tournamentGroupsRepository.save(currentGroup);
                     rewardsService.createReward(player, latest_tournament, currentGroup);
-                    leaderBoard = generateLeaderBoard(currentGroup);
+                    to_return = currentGroup;
+                    placed = true;
                     break;
                 }
                 catch (IllegalStateException e){
@@ -73,19 +69,24 @@ public class TournamentGroupService {
                     throw new UnableToAddPlayerToGroupException();
                 }
             }
-            else{
-                //in this case, the tournament group does have an empty spot
-                //however the player that is asking to join is not from a unique country
-                //therefore create a new tournament group instance and assign the player there.
-                leaderBoard = createGroupAndAssignPlayer(player, latest_tournament);
-            }
         }
-        return leaderBoard;
+        if(!placed){
+            //in this case, the pending tournament groups may have an empty spot
+            //however the player that is asking to join is not from a unique country to any group
+            //therefore create a new tournament group instance and assign the player there.
+            to_return = createGroupAndAssignPlayer(player, latest_tournament);
+            placed = true;
+        }
+        return to_return;
     }
     public String generateLeaderBoard(TournamentGroup tournamentGroup){
         List<Rewards> playersOrderedByGroupScore = rewardsService.orderedPlayers(tournamentGroup);
-        StringBuilder leaderBoard = new StringBuilder("Players from highest score to lowest:\n");
+        StringBuilder leaderBoard = new StringBuilder();
 
+        if(!tournamentGroup.isReadyToStart()){
+            leaderBoard.append("The group is not yet ready to start. Waiting for other players to join\n");
+        }
+        leaderBoard.append("Players from highest score to lowest:\n");
         for(Rewards currentInstance: playersOrderedByGroupScore){
             Long player_id = currentInstance.getPlayer().getId();
             String player_name = currentInstance.getPlayer().getUserName();

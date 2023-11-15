@@ -12,8 +12,8 @@ import java.util.Optional;
 public interface TournamentGroupsRepository extends JpaRepository<TournamentGroup, Long> {
 
     @Query("SELECT tg FROM TournamentGroup tg " +
-            "WHERE (tg.player1 IS NULL OR tg.player2 IS NULL OR tg.player3 IS NULL " +
-            "OR tg.player4 IS NULL OR tg.player5 IS NULL) " +
-            "AND tg.is_active = false")
+            "WHERE tg.is_active = false AND " +
+            "(tg.player1 IS NULL OR tg.player2 IS NULL OR tg.player3 IS NULL OR tg.player4 IS NULL OR tg.player5 IS NULL) " +
+            "ORDER BY tg.id ASC")
     Optional<List<TournamentGroup>> findPendingTournamentGroups();
 }

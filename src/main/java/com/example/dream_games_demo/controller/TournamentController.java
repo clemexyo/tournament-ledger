@@ -4,8 +4,10 @@ import com.example.dream_games_demo.exceptions.InvalidEnterTournamentRequestExce
 import com.example.dream_games_demo.exceptions.InvalidUpdatePlayerLevelRequestException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Tournament;
+import com.example.dream_games_demo.model.TournamentGroup;
 import com.example.dream_games_demo.requests.EnterTournamentRequest;
 import com.example.dream_games_demo.service.PlayerService;
+import com.example.dream_games_demo.service.TournamentGroupService;
 import com.example.dream_games_demo.service.TournamentService;
 import org.hibernate.sql.ast.tree.predicate.BooleanExpressionPredicate;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -28,6 +30,8 @@ public class TournamentController {
     private TournamentService tournamentService;
     @Autowired
     private PlayerService playerService;
+    @Autowired
+    private TournamentGroupService tournamentGroupService;
 
     @PostMapping
     public ResponseEntity<String> enterTournament(@RequestBody EnterTournamentRequest request){
@@ -35,16 +39,16 @@ public class TournamentController {
             throw new InvalidEnterTournamentRequestException();
         }
         Long player_id = request.getPlayerId();
-        String leaderBoard = "";
+        TournamentGroup tournamentGroup = null;
         boolean playerStatus = playerService.playerStatus(player_id);
 
         if(playerStatus){
             List<Object> tournamentStatus = tournamentService.tournamentStatus();
             if((Boolean) tournamentStatus.get(0)){
-                leaderBoard = tournamentService.enterTournament(player_id, (Tournament) tournamentStatus.get(1));
+                tournamentGroup = tournamentService.enterTournament(player_id, (Tournament) tournamentStatus.get(1));
             }
         }
-        return new ResponseEntity<String>(leaderBoard, HttpStatus.OK);
+        return new ResponseEntity<String>(tournamentGroupService.generateLeaderBoard(tournamentGroup), HttpStatus.OK);
 
     }
 }
