@@ -1,6 +1,7 @@
 package com.example.dream_games_demo.advice;
 
 import com.example.dream_games_demo.exceptions.*;
+import com.example.dream_games_demo.requests.EnterTournamentRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -22,6 +23,8 @@ public class GlobalExceptionHandler {
     private String createPlayerExceptionMessage;
     @Value("${error.messages.createCountryExceptionMessage}")
     private String createCountryExceptionMessage;
+    @Value("${error.messages.invalidEnterTournamentRequestMessage}")
+    private String invalidEnterTournamentRequestMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -46,6 +49,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(CreateCountryException.class)
     public ResponseEntity<String> handleCreateCountryException(CreateCountryException e){
         return new ResponseEntity<>(createCountryExceptionMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidEnterTournamentRequestException.class)
+    public ResponseEntity<String> handleInvalidEnterTournamentRequest(InvalidEnterTournamentRequestException e){
+        return new ResponseEntity<>(invalidEnterTournamentRequestMessage, HttpStatus.BAD_REQUEST);
     }
 }
 
