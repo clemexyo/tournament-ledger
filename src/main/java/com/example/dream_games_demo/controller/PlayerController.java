@@ -1,6 +1,8 @@
 package com.example.dream_games_demo.controller;
 
+import com.example.dream_games_demo.exceptions.InvalidCreatePlayerRequestException;
 import com.example.dream_games_demo.model.Player;
+import com.example.dream_games_demo.requests.CreatePlayerRequest;
 import com.example.dream_games_demo.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -24,8 +26,11 @@ public class PlayerController {
     }
 
     @PostMapping
-    public ResponseEntity<String> createPlayer(@RequestBody Map<String, Object> requestBody){
-        String user_name = (String) requestBody.get("user_name");
+    public ResponseEntity<String> createPlayer(@RequestBody CreatePlayerRequest request){
+        if(request == null || request.getUserName() == null || request.getUserName() == ""){
+            throw new InvalidCreatePlayerRequestException();
+        }
+        String user_name = request.getUserName();
         String createdPlayer = playerService.createPlayer(user_name);
         return new ResponseEntity<String>(createdPlayer, HttpStatus.CREATED);
     }
