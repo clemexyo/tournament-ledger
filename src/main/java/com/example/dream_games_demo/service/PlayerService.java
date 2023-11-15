@@ -2,6 +2,7 @@ package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.exceptions.CreatePlayerException;
 import com.example.dream_games_demo.exceptions.NoPlayerFoundException;
+import com.example.dream_games_demo.exceptions.PlayerCannotEnterTournamentException;
 import com.example.dream_games_demo.exceptions.PlayerNotFoundException;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
@@ -93,7 +94,7 @@ public class PlayerService {
                 can_enter = true;
             }
             else {
-                //player cannot enter exception
+                throw new PlayerCannotEnterTournamentException();
             }
         }
         else{
