@@ -32,9 +32,6 @@ public class PlayerService {
 
     public List<String> allPlayers(){
         List<Player> playersObjectList = playerRepository.findAll();
-        if(playersObjectList.isEmpty()){
-            throw new NoPlayerFoundException();
-        }
         List<String> playersStringList = new ArrayList<String>();
         for (Player currentPlayer : playersObjectList) {
             playersStringList.add(currentPlayer.toString());

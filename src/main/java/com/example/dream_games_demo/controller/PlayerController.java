@@ -25,7 +25,11 @@ public class PlayerController {
 
     @GetMapping
     public ResponseEntity<List<String>> getAllPlayers(){
-        return new ResponseEntity<List<String>>(playerService.allPlayers(), HttpStatus.OK);
+        List<String> playersList = playerService.allPlayers();
+        if(playersList.isEmpty()){
+            throw new NoPlayerFoundException();
+        }
+        return new ResponseEntity<List<String>>(playersList, HttpStatus.OK);
     }
 
     @PostMapping
