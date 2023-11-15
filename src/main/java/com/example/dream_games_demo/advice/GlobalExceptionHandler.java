@@ -1,9 +1,6 @@
 package com.example.dream_games_demo.advice;
 
-import com.example.dream_games_demo.exceptions.InvalidCreateCountryRequestException;
-import com.example.dream_games_demo.exceptions.InvalidCreatePlayerRequestException;
-import com.example.dream_games_demo.exceptions.InvalidUpdatePlayerLevelRequestException;
-import com.example.dream_games_demo.exceptions.NoPlayerFoundException;
+import com.example.dream_games_demo.exceptions.*;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -21,6 +18,8 @@ public class GlobalExceptionHandler {
     private String invalidUpdatePlayerLevelRequestMessage;
     @Value("${error.messages.noPlayerFoundMessage}")
     private String noPlayerFoundMessage;
+    @Value("${error.messages.createPlayerExceptionMessage}")
+    private String createPlayerExceptionMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -37,6 +36,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidUpdatePlayerLevelRequestException.class)
     public ResponseEntity<String> handleInvalidUpdatePlayerLevelRequestException(InvalidUpdatePlayerLevelRequestException e) {
         return new ResponseEntity<>(invalidUpdatePlayerLevelRequestMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CreatePlayerException.class)
+    public ResponseEntity<String> handleCreatePlayerException(CreatePlayerException e) {
+        return new ResponseEntity<>(createPlayerExceptionMessage, HttpStatus.BAD_REQUEST);
     }
 }
 

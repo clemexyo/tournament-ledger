@@ -1,5 +1,6 @@
 package com.example.dream_games_demo.service;
 
+import com.example.dream_games_demo.exceptions.CreatePlayerException;
 import com.example.dream_games_demo.exceptions.NoPlayerFoundException;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
@@ -45,17 +46,22 @@ public class PlayerService {
     }
 
     public String createPlayer(String user_name){
-        Player player = new Player(user_name);
-        playerRepository.save(player);
+        try{
+            Player player = new Player(user_name);
+            playerRepository.save(player);
 
-        List<Country> allCountries = countryService.allCountries();
-        Random random = new Random();
-        Country randomCountry = allCountries.get(random.nextInt(allCountries.size()));
+            List<Country> allCountries = countryService.allCountries();
+            Random random = new Random();
+            Country randomCountry = allCountries.get(random.nextInt(allCountries.size()));
 
-        player.setCountry(randomCountry);
-        playerRepository.save(player);
+            player.setCountry(randomCountry);
+            playerRepository.save(player);
 
-        return player.toString();
+            return player.toString();
+        }catch (Exception e){
+            throw new CreatePlayerException();
+        }
+
     }
 
     public String updateLevel(Long id){
