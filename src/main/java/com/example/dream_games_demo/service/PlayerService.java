@@ -1,9 +1,6 @@
 package com.example.dream_games_demo.service;
 
-import com.example.dream_games_demo.exceptions.CreatePlayerException;
-import com.example.dream_games_demo.exceptions.NoPlayerFoundException;
-import com.example.dream_games_demo.exceptions.PlayerCannotEnterTournamentException;
-import com.example.dream_games_demo.exceptions.PlayerNotFoundException;
+import com.example.dream_games_demo.exceptions.*;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.repository.CountryRepository;
@@ -69,19 +66,23 @@ public class PlayerService {
     public String updateLevel(Long id){
         Optional<Player> optional = playerRepository.findById(id);
         if(optional.isPresent()) {
-            Player player = optional.get();
+            try{
+                Player player = optional.get();
 
-            Long level = player.getLevel();
-            Long coins = player.getCoins();
+                Long level = player.getLevel();
+                Long coins = player.getCoins();
 
-            player.setCoins(coins + 25);
-            player.setLevel(level + 1);
+                player.setCoins(coins + 25);
+                player.setLevel(level + 1);
 
-            playerRepository.save(player);
-            return player.toString();
+                playerRepository.save(player);
+                return player.toString();
+            }catch (Exception e){
+                throw new UpdatePlayerLevelRequestException();
+            }
         }
         else{
-            return "Something went wrong";
+            throw new PlayerNotFoundException();
         }
     }
 

@@ -35,6 +35,8 @@ public class GlobalExceptionHandler {
     private String tournamentNotFoundMessage;
     @Value("${error.messages.unableToAddPlayerToTournamentGroupMessage}")
     private String unableToAddPlayerToTournamentGroupMessage;
+    @Value("${error.messages.unableToUpdatePlayerLevelMessage}")
+    private String unableToUpdatePlayerLevelMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -83,6 +85,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UnableToAddPlayerToGroupException.class)
     public ResponseEntity<String> handleUnableToAddPlayerToGroupException(UnableToAddPlayerToGroupException e) {
         return new ResponseEntity<>(unableToAddPlayerToTournamentGroupMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(UpdatePlayerLevelRequestException.class)
+    public ResponseEntity<String> handleUpdatePlayerLevelRequestException(UpdatePlayerLevelRequestException e) {
+        return new ResponseEntity<>(unableToUpdatePlayerLevelMessage, HttpStatus.BAD_REQUEST);
     }
 }
 

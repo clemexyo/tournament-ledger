@@ -48,6 +48,7 @@ public class PlayerController {
             throw new InvalidUpdatePlayerLevelRequestException();
         }
         Long id = request.getPlayerId();
-        return new ResponseEntity<String>(playerService.updateLevel(id), HttpStatus.OK);
+        String player = playerService.updateLevel(id);
+        return new ResponseEntity<String>(player, HttpStatus.OK);
     }
 }
