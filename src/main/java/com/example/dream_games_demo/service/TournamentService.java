@@ -80,6 +80,9 @@ public class TournamentService {
         map.put("httpStatus", httpStatus);
         return map;
     }
+    public Tournament findLatestTournament(){
+        return tournamentRepository.findTopByOrderByIdDesc().get();
+    }
 
     @Scheduled(cron = "0 0 0 * * *")
     public void startTournament(){

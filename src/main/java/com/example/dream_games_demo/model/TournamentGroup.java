@@ -3,6 +3,9 @@ import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Tournament;
 import jakarta.persistence.*;
 
+import java.util.ArrayList;
+import java.util.List;
+
 @Entity
 @Table(name = "tournament_groups")
 public class TournamentGroup {
@@ -69,20 +72,52 @@ public class TournamentGroup {
             throw new IllegalStateException("No empty column available to assign the player.");
         }
         this.is_active = false;
+        this.total_group_score = 0L;
     }
     public String currentBoard(){
         return "to be implemented";
     }
-    public Player getPlayer1() { return this.player1; }
-    public Player getPlayer2() { return this.player2; }
-    public Player getPlayer3() { return this.player3; }
-    public Player getPlayer4() { return this.player4; }
-    public Player getPlayer5() { return this.player5; }
-    public void setPlayer1(Player player) { this.player1 = player; }
-    public void setPlayer2(Player player) { this.player2 = player; }
-    public void setPlayer3(Player player) { this.player3 = player; }
-    public void setPlayer4(Player player) { this.player4 = player; }
-    public void setPlayer5(Player player) { this.player5 = player; }
+    public void addPlayer(Player player){
+        if(player1 == null){
+            this.player1 = player;
+        }
+        else if(player2 == null){
+            this.player2 = player;
+        }
+        else if(player3 == null){
+            this.player3 = player;
+        }
+        else if(player4 == null){
+            this.player4 = player;
+        }
+        else if(player5 == null){
+            this.player5 = player;
+        }
+        else {
+            //we will hope for the best and the controllers added before this piece of code will be
+            //enough that, so we will never end up in this exception.
+            throw new IllegalStateException("No empty column available to assign the player.");
+        }
+    }
+    public boolean isReadyToStart(){
+        return this.player1 != null &&
+                this.player2 != null &&
+                this.player3 != null &&
+                this.player4 != null &&
+                this.player5 != null;
+    }
 
     // Getters and setters
+    public List<String> tournamentPlayerCountries(){
+        List<String> countries = new ArrayList<String>();
+        countries.add(this.player1 != null ? this.player1.getCountry() : "");
+        countries.add(this.player2 != null ? this.player2.getCountry() : "");
+        countries.add(this.player3 != null ? this.player3.getCountry() : "");
+        countries.add(this.player4 != null ? this.player4.getCountry() : "");
+        countries.add(this.player5 != null ? this.player5.getCountry() : "");
+        return countries;
+    }
+    public void setIsActive(boolean updated_is_active){
+        this.is_active = updated_is_active;
+    }
 }

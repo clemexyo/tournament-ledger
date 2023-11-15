@@ -20,7 +20,7 @@ public class PlayerService {
     private PlayerRepository playerRepository;
 
     @Autowired
-    private CountryRepository countryRepository;
+    private CountryService countryService;
 
     @Autowired
     private TournamentRepository tournamentRepository;
@@ -46,7 +46,7 @@ public class PlayerService {
         Player player = new Player(user_name);
         playerRepository.save(player);
 
-        List<Country> allCountries = countryRepository.findAll();
+        List<Country> allCountries = countryService.allCountries();
         Random random = new Random();
         Country randomCountry = allCountries.get(random.nextInt(allCountries.size()));
 
