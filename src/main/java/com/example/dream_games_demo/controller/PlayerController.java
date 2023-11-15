@@ -1,8 +1,10 @@
 package com.example.dream_games_demo.controller;
 
 import com.example.dream_games_demo.exceptions.InvalidCreatePlayerRequestException;
+import com.example.dream_games_demo.exceptions.InvalidUpdatePlayerLevelRequestException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.requests.CreatePlayerRequest;
+import com.example.dream_games_demo.requests.UpdatePlayerLevelRequest;
 import com.example.dream_games_demo.service.PlayerService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
@@ -36,8 +38,11 @@ public class PlayerController {
     }
 
     @PutMapping
-    public ResponseEntity<String> updateLevel(@RequestBody Map<String, Object> requestBody){
-        Long id = ((Number) requestBody.get("id")).longValue();
+    public ResponseEntity<String> updateLevel(@RequestBody UpdatePlayerLevelRequest request){
+        if(request == null || request.getPlayerId() == null || !(request.getPlayerId() instanceof Long)){
+            throw new InvalidUpdatePlayerLevelRequestException();
+        }
+        Long id = request.getPlayerId();
         return new ResponseEntity<String>(playerService.updateLevel(id), HttpStatus.OK);
     }
 }

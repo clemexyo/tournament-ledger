@@ -2,6 +2,7 @@ package com.example.dream_games_demo.advice;
 
 import com.example.dream_games_demo.exceptions.InvalidCreateCountryRequestException;
 import com.example.dream_games_demo.exceptions.InvalidCreatePlayerRequestException;
+import com.example.dream_games_demo.exceptions.InvalidUpdatePlayerLevelRequestException;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -15,6 +16,8 @@ public class GlobalControllerExceptionHandler {
     private String invalidCreateCountryRequestMessage;
     @Value("${error.messages.invalidCreatePlayerRequestMessage}")
     private String invalidCreatePlayerRequestMessage;
+    @Value("${error.messages.invalidUpdatePlayerLevelRequestMessage}")
+    private String invalidUpdatePlayerLevelRequestMessage;
 
     @ExceptionHandler(InvalidCreateCountryRequestException.class)
     public ResponseEntity<String> handleInvalidRequestException(InvalidCreateCountryRequestException e) {
@@ -23,6 +26,10 @@ public class GlobalControllerExceptionHandler {
     @ExceptionHandler(InvalidCreatePlayerRequestException.class)
     public ResponseEntity<String> handleInvalidCreatePlayerRequest(InvalidCreatePlayerRequestException e) {
         return new ResponseEntity<>(invalidCreatePlayerRequestMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidUpdatePlayerLevelRequestException.class)
+    public ResponseEntity<String> handleInvalidUpdatePlayerLevelRequestException(InvalidUpdatePlayerLevelRequestException e) {
+        return new ResponseEntity<>(invalidUpdatePlayerLevelRequestMessage, HttpStatus.BAD_REQUEST);
     }
 }
 
