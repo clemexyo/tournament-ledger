@@ -1,5 +1,6 @@
 package com.example.dream_games_demo.service;
 
+import com.example.dream_games_demo.exceptions.TournamentNotActiveException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Tournament;
 import com.example.dream_games_demo.model.TournamentGroup;
@@ -31,7 +32,7 @@ public class TournamentService {
                 valid_tournament = true;
             }
             else{
-               //tournament not active exception
+                throw new TournamentNotActiveException();
             }
         }
         else{

@@ -34,7 +34,7 @@ public class PlayerController {
 
     @PostMapping
     public ResponseEntity<String> createPlayer(@RequestBody CreatePlayerRequest request){
-        if(request == null || request.getUserName() == null || request.getUserName() == ""){
+        if(request == null || request.getUserName() == null || request.getUserName().equals("")){
             throw new InvalidCreatePlayerRequestException();
         }
         String user_name = request.getUserName();
