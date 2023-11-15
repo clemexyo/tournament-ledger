@@ -10,6 +10,7 @@ import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
 import java.util.List;
+import java.util.Optional;
 import java.util.stream.Collectors;
 
 @Service
@@ -25,5 +26,17 @@ public class RewardsService {
         return allRewardsOfTheGroup.stream()
                 .sorted(Comparator.comparing(Rewards::getScore).reversed())
                 .collect(Collectors.toList());
+    }
+    public void incrementPlayerScore(Long player_id, TournamentGroup tournamentGroup){
+        Optional<Rewards> optionalReward = rewardsRepository.findByPlayerAndTournamentGroup(player_id, tournamentGroup.getId());
+        if(optionalReward.isPresent()){
+            Long player_score = optionalReward.get().getScore();
+            player_score += 1;
+            optionalReward.get().setScore(player_score);
+
+            Long total_group_score = tournamentGroup.getTotal_group_score();
+            total_group_score += 1;
+            tournamentGroup.setTotal_group_score(total_group_score);
+        }
     }
 }

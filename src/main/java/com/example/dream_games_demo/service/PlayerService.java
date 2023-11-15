@@ -3,6 +3,7 @@ package com.example.dream_games_demo.service;
 import com.example.dream_games_demo.exceptions.*;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
+import com.example.dream_games_demo.model.TournamentGroup;
 import com.example.dream_games_demo.repository.CountryRepository;
 import com.example.dream_games_demo.repository.PlayerRepository;
 import com.example.dream_games_demo.repository.TournamentGroupsRepository;
@@ -20,15 +21,12 @@ public class PlayerService {
 
     @Autowired
     private PlayerRepository playerRepository;
-
     @Autowired
     private CountryService countryService;
-
     @Autowired
-    private TournamentRepository tournamentRepository;
-
+    private TournamentGroupService tournamentGroupService;
     @Autowired
-    private TournamentGroupsRepository tournamentGroupsRepository;
+    private RewardsService rewardsService;
 
     public List<String> allPlayers(){
         List<Player> playersObjectList = playerRepository.findAll();
@@ -68,13 +66,16 @@ public class PlayerService {
         if(optional.isPresent()) {
             try{
                 Player player = optional.get();
+                Optional<TournamentGroup> playerInActiveGroup = tournamentGroupService.isPlayerInActiveGroup(player.getId());
 
                 Long level = player.getLevel();
                 Long coins = player.getCoins();
 
                 player.setCoins(coins + 25);
                 player.setLevel(level + 1);
-
+                if(playerInActiveGroup.isPresent()){
+                    rewardsService.incrementPlayerScore(player.getId(), playerInActiveGroup.get());
+                }
                 playerRepository.save(player);
                 return player.toString();
             }catch (Exception e){
@@ -102,11 +103,5 @@ public class PlayerService {
            throw new PlayerNotFoundException();
         }
         return can_enter;
-    }
-
-    public void playerEnteredGroup(Long id){
-        Player player = playerRepository.findById(id).get();
-        player.setCan_enter(false);
-        playerRepository.save(player);
     }
 }

@@ -118,5 +118,8 @@ public class TournamentGroup {
     public void setIsActive(boolean updated_is_active){
         this.is_active = updated_is_active;
     }
+    public boolean getIsActive() { return this.is_active; }
     public Long getId() { return this.id; }
+    public Long getTotal_group_score() { return this.total_group_score; }
+    public void setTotal_group_score(Long group_score) { this.total_group_score = group_score; }
 }

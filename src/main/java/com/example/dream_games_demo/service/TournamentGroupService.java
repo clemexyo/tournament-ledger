@@ -22,8 +22,6 @@ public class TournamentGroupService {
     @Autowired
     private TournamentGroupsRepository tournamentGroupsRepository;
     @Autowired
-    private PlayerService playerService;
-    @Autowired
     private RewardsService rewardsService;
 
     public Optional<List<TournamentGroup>> findPendingTournamentGroups(){
@@ -33,7 +31,8 @@ public class TournamentGroupService {
         TournamentGroup to_return = null;
         try{
             TournamentGroup tournamentGroup = new TournamentGroup(player, latest_tournament);
-            playerService.playerEnteredGroup(player.getId());
+            //playerService.playerEnteredGroup(player.getId());
+            player.setCan_enter(false);
             tournamentGroupsRepository.save(tournamentGroup);
             rewardsService.createReward(player, latest_tournament, tournamentGroup);
             to_return = tournamentGroup;
@@ -99,6 +98,9 @@ public class TournamentGroupService {
         }
         return leaderBoard.toString();
     }
+    public Optional<TournamentGroup> isPlayerInActiveGroup(Long player_id){
+        return tournamentGroupsRepository.findTournamentGroupByPlayerId(player_id);
+    }
     private Boolean uniqueCountry(Player player, TournamentGroup currentGroup){
         String newPlayerCountry = player.getCountry();
         List<String> counties = currentGroup.tournamentPlayerCountries();
@@ -114,6 +116,8 @@ public class TournamentGroupService {
     private void addPlayer(Player player, TournamentGroup currentGroup){
        currentGroup.addPlayer(player);
        tournamentGroupsRepository.save(currentGroup);
-       playerService.playerEnteredGroup(player.getId());
+       //playerService.playerEnteredGroup(player.getId());
+        player.setCan_enter(false);
     }
+
 }

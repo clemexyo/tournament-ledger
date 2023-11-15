@@ -38,4 +38,5 @@ public class Rewards {
     }
     public Player getPlayer() { return this.player; }
     public Long getScore() { return this.player_score; }
+    public void setScore(Long score) { this.player_score = score; }
 }
