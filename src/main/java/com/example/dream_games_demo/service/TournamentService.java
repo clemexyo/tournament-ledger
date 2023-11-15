@@ -30,9 +30,9 @@ public class TournamentService {
         HttpStatus httpStatus = HttpStatus.OK;
 
         Optional<Tournament> optionalTournament = tournamentRepository.findTopByOrderByIdDesc();
-
+        Tournament tournament = null;
         if(optionalTournament.isPresent()){
-            Tournament tournament = optionalTournament.get();
+            tournament = optionalTournament.get();
             if(tournament.getisActive()){
                 message = "Valid Tournament";
                 httpStatus = HttpStatus.OK;
@@ -50,9 +50,10 @@ public class TournamentService {
         Map<String, Object> map = new HashMap<>();
         map.put("message", message);
         map.put("httpStatus", httpStatus);
+        map.put("latest_tournament", tournament);
         return map;
     }
-    public Map<String, Object> enterTournament(Long playerId){
+    public Map<String, Object> enterTournament(Long playerId, Tournament latest_tournament){
         String message = "";
         HttpStatus httpStatus = HttpStatus.OK;
 
@@ -64,13 +65,13 @@ public class TournamentService {
             List<TournamentGroup> pendingTournamentGroups = optionalPendingTournamentGroups.get();
 
             //here we know that there is at least one available tournament group.
-            Map<String, Object> currentStatus = tournamentGroupService.assignPlayerToAvailableGroup(player, pendingTournamentGroups);
+            Map<String, Object> currentStatus = tournamentGroupService.assignPlayerToAvailableGroup(player, pendingTournamentGroups, latest_tournament);
         }
         else{
             //Since there are either no available groups or no groups at all,
             //we will create a new TournamentGroup instance and assign the player there in which
             //the player can wait for other players to join the group and start the game.
-            Map<String, Object> currentStatus = tournamentGroupService.createGroupAndAssignPlayer(player);
+            Map<String, Object> currentStatus = tournamentGroupService.createGroupAndAssignPlayer(player, latest_tournament);
             message = (String) currentStatus.get("message");
             httpStatus = (HttpStatus) currentStatus.get("httpStatus");
         }
@@ -79,9 +80,6 @@ public class TournamentService {
         map.put("message", message);
         map.put("httpStatus", httpStatus);
         return map;
-    }
-    public Tournament findLatestTournament(){
-        return tournamentRepository.findTopByOrderByIdDesc().get();
     }
 
     @Scheduled(cron = "0 0 0 * * *")

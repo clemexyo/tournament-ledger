@@ -37,7 +37,7 @@ public class TournamentController {
         if(playerStatus.get("message") == "Can enter"){
             Map<String, Object> tournamentStatus = tournamentService.tournamentStatus();
             if(tournamentStatus.get("message") == "Valid Tournament"){
-                Map<String, Object> result = tournamentService.enterTournament(playerId);
+                Map<String, Object> result = tournamentService.enterTournament(playerId, (Tournament) tournamentStatus.get("latest_tournament"));
                 message = (String) result.get("message");
                 httpStatus = (HttpStatus) result.get("httpStatus");
             }

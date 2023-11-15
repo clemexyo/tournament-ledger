@@ -50,7 +50,7 @@ public class TournamentGroup {
     public TournamentGroup(){
 
     }
-    public TournamentGroup(Player player){
+    public TournamentGroup(Player player, Tournament latest_tournament){
         if(player1 == null){
             this.player1 = player;
         }
@@ -73,6 +73,7 @@ public class TournamentGroup {
         }
         this.is_active = false;
         this.total_group_score = 0L;
+        this.tournament = latest_tournament;
     }
     public String currentBoard(){
         return "to be implemented";

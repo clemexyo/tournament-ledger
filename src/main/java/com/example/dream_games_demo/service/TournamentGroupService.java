@@ -25,12 +25,12 @@ public class TournamentGroupService {
     public Optional<List<TournamentGroup>> findPendingTournamentGroups(){
         return tournamentGroupsRepository.findPendingTournamentGroups();
     }
-    public Map<String, Object> createGroupAndAssignPlayer(Player player){
+    public Map<String, Object> createGroupAndAssignPlayer(Player player, Tournament latest_tournament){
         String message = "";
         HttpStatus httpStatus = HttpStatus.OK;
         try{
             //Tournament tournament = tournamentService.findLatestTournament();
-            TournamentGroup tournamentGroup = new TournamentGroup(player);
+            TournamentGroup tournamentGroup = new TournamentGroup(player, latest_tournament);
             playerService.playerEnteredGroup(player.getId());
             tournamentGroupsRepository.save(tournamentGroup);
             message = "Player assigned to a new tournament group. Currently waiting for other players to join.\n" +
@@ -49,7 +49,7 @@ public class TournamentGroupService {
         return map;
     }
 
-    public Map<String, Object> assignPlayerToAvailableGroup(Player player, List<TournamentGroup> pendingTournamentGroups){
+    public Map<String, Object> assignPlayerToAvailableGroup(Player player, List<TournamentGroup> pendingTournamentGroups, Tournament latest_tournament){
         String message = "";
         HttpStatus httpStatus = HttpStatus.OK;
 
@@ -68,7 +68,7 @@ public class TournamentGroupService {
                 }
             }
             else{
-                Map<String, Object> result = createGroupAndAssignPlayer(player);
+                Map<String, Object> result = createGroupAndAssignPlayer(player, latest_tournament);
             }
         }
 
