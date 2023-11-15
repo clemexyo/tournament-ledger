@@ -26,4 +26,18 @@ public class Rewards {
 
     @Column(columnDefinition = "boolean default false")
     private Boolean is_claimed;
+    public Rewards() {
+        this.player = null;
+        this.amount = 0L;
+        this.tournament = null;
+        this.tournament_group = null;
+        this.is_claimed = false;
+    }
+    public Rewards(Player player, Tournament tournament, TournamentGroup tournament_group) {
+        this.player = player;
+        this.tournament = tournament;
+        this.tournament_group = tournament_group;
+        this.is_claimed = false;
+        this.amount = 0L;
+    }
 }

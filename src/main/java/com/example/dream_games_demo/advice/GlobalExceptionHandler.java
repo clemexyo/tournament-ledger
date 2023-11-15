@@ -33,6 +33,8 @@ public class GlobalExceptionHandler {
     private String tournamentNotActiveMessage;
     @Value("${error.messages.tournamentNotFoundMessage}")
     private String tournamentNotFoundMessage;
+    @Value("${error.messages.unableToAddPlayerToTournamentGroupMessage}")
+    private String unableToAddPlayerToTournamentGroupMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -77,6 +79,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(TournamentNotFoundException.class)
     public ResponseEntity<String> handleTournamentNotFoundException(TournamentNotFoundException e) {
         return new ResponseEntity<>(tournamentNotFoundMessage, HttpStatus.NOT_FOUND);
+    }
+    @ExceptionHandler(UnableToAddPlayerToGroupException.class)
+    public ResponseEntity<String> handleUnableToAddPlayerToGroupException(UnableToAddPlayerToGroupException e) {
+        return new ResponseEntity<>(unableToAddPlayerToTournamentGroupMessage, HttpStatus.BAD_REQUEST);
     }
 }
 

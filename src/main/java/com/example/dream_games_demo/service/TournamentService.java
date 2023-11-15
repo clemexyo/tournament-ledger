@@ -51,13 +51,13 @@ public class TournamentService {
             List<TournamentGroup> pendingTournamentGroups = optionalPendingTournamentGroups.get();
 
             //here we know that there is at least one available tournament group.
-            Map<String, Object> currentStatus = tournamentGroupService.assignPlayerToAvailableGroup(player, pendingTournamentGroups, latest_tournament);
+            leaderBoard = tournamentGroupService.assignPlayerToAvailableGroup(player, pendingTournamentGroups, latest_tournament);
         }
         else{
             //Since there are either no available groups or no groups at all,
             //we will create a new TournamentGroup instance and assign the player there in which
             //the player can wait for other players to join the group and start the game.
-            Map<String, Object> currentStatus = tournamentGroupService.createGroupAndAssignPlayer(player, latest_tournament);
+            leaderBoard = tournamentGroupService.createGroupAndAssignPlayer(player, latest_tournament);
         }
         return leaderBoard;
     }
