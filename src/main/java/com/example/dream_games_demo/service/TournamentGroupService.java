@@ -83,7 +83,7 @@ public class TournamentGroupService {
         return to_return;
     }
     public String generateLeaderBoard(TournamentGroup tournamentGroup, Long tournament_id){
-        List<Rewards> rewardsOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup, tournament_id);
+        List<Rewards> rewardsOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup);
         StringBuilder leaderBoard = new StringBuilder();
 
         if(!tournamentGroup.isFull()){
@@ -112,11 +112,28 @@ public class TournamentGroupService {
             for(TournamentGroup currentGroup: tournamentGroups){
                 currentGroup.setIsActive(false);
                 tournamentGroupsRepository.save(currentGroup);
-                playersLeaveTheGroup(currentGroup, tournament_id);
+                playersLeaveTheGroup(currentGroup);
             }
         }
         else {
             throw new NoTournamentGroupFoundException();
+        }
+    }
+    public String getPlayerGroupRank(Long player_id, Long tournament_group_id){
+        TournamentGroup tournamentGroup = findById(tournament_group_id);
+        List<Rewards> temp = rewardsService.orderedRewardsByPlayerScore(tournamentGroup);
+
+        int rank = 0;
+        for(int i = 0; i < temp.size(); i++){
+            if(temp.get(i).getPlayer().getId() == player_id){
+                rank = i + 1;
+            }
+        }
+        if(rank == 0){
+            throw new NoTournamentGroupFoundException();
+        }
+        else {
+            return "Player's rank in tournament group: " + tournament_group_id + " ,is " + rank;
         }
     }
     private Boolean uniqueCountry(Player player, TournamentGroup currentGroup){
@@ -138,8 +155,8 @@ public class TournamentGroupService {
        //playerService.playerEnteredGroup(player.getId());
         player.setCan_enter(false);
     }
-    private void playersLeaveTheGroup(TournamentGroup tournamentGroup, Long tournament_id){
-        List<Rewards> rewardsOfTheGroupOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup, tournament_id);
+    private void playersLeaveTheGroup(TournamentGroup tournamentGroup){
+        List<Rewards> rewardsOfTheGroupOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup);
 
         if(tournamentGroup.isFull()){
             //all players except winner and second will leave.

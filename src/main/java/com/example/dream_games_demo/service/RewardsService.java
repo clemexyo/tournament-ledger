@@ -23,8 +23,8 @@ public class RewardsService {
         Rewards reward = new Rewards(player, tournament, tournamentGroup);
         rewardsRepository.save(reward);
     }
-    public List<Rewards> orderedRewardsByPlayerScore(TournamentGroup tournamentGroup, Long tournament_id){
-        Optional<List<Rewards>> optionalGroupRewardsOrderedByPlayerScore = rewardsRepository.groupRewardsOrderedByPlayerScore(tournamentGroup.getId(), tournament_id);
+    public List<Rewards> orderedRewardsByPlayerScore(TournamentGroup tournamentGroup){
+        Optional<List<Rewards>> optionalGroupRewardsOrderedByPlayerScore = rewardsRepository.groupRewardsOrderedByPlayerScore(tournamentGroup.getId());
         if(!optionalGroupRewardsOrderedByPlayerScore.get().isEmpty()){
             return optionalGroupRewardsOrderedByPlayerScore.get();
         }
