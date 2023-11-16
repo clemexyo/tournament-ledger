@@ -40,6 +40,8 @@ public class GlobalExceptionHandler {
     private String tournamentGroupsNotFoundMessage;
     @Value("${error.messages.noRewardsFoundMessage}")
     private String noRewardsFoundMessage;
+    @Value("${error.messages.invalidGetLeaderBoardRequestMessage}")
+    private String invalidGetLeaderBoardRequestMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -100,6 +102,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoRewardsFoundException.class)
     public ResponseEntity<String> handleNoRewardsFoundException(NoRewardsFoundException e) {
         return new ResponseEntity<>(noRewardsFoundMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidGetLeaderBoardRequestException.class)
+    public ResponseEntity<String> handleInvalidGetLeaderBoardRequestException(InvalidGetLeaderBoardRequestException e) {
+        return new ResponseEntity<>(invalidGetLeaderBoardRequestMessage, HttpStatus.BAD_REQUEST);
     }
 }
 

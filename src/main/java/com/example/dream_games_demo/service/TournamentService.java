@@ -1,5 +1,6 @@
 package com.example.dream_games_demo.service;
 
+import com.example.dream_games_demo.exceptions.NoTournamentGroupFoundException;
 import com.example.dream_games_demo.exceptions.TournamentNotActiveException;
 import com.example.dream_games_demo.exceptions.TournamentNotFoundException;
 import com.example.dream_games_demo.model.Player;
@@ -60,14 +61,13 @@ public class TournamentService {
         }
         return to_return;
     }
-
     @Scheduled(cron = "0 0 0 * * *")
     public void startTournament(){
         Tournament tournament = new Tournament();
         tournamentRepository.save(tournament);
     }
 
-    @Scheduled(cron = "0 0/1 * * * *")
+    @Scheduled(cron = "0 20 * * * *")
     public void endTournament(){
         Optional<Tournament> latestTournament = tournamentRepository.findTopByOrderByIdDesc();
         if(latestTournament.isPresent()){
@@ -78,6 +78,5 @@ public class TournamentService {
         else{
             throw new TournamentNotFoundException();
         }
-
     }
 }

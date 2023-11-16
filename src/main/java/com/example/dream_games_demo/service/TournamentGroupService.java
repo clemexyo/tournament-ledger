@@ -157,4 +157,13 @@ public class TournamentGroupService {
             }
         }
     }
+    public TournamentGroup findById(Long id){
+        Optional<TournamentGroup> optionalTournamentGroup = tournamentGroupsRepository.findById(id);
+        if(optionalTournamentGroup.isPresent()) {
+            return optionalTournamentGroup.get();
+        }
+        else {
+            throw new NoTournamentGroupFoundException();
+        }
+    }
 }
