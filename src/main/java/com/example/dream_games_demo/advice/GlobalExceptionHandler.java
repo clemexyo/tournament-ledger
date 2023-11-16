@@ -44,6 +44,8 @@ public class GlobalExceptionHandler {
     private String invalidGetLeaderBoardRequestMessage;
     @Value("${error.messages.rewardNotFoundExceptionMessage}")
     private String rewardNotFoundExceptionMessage;
+    @Value("${error.messages.invalidClaimRewardRequestExceptionMessage}")
+    private String invalidClaimRewardRequestExceptionMessage;
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
         return new ResponseEntity<>(noPlayerFoundMessage, HttpStatus.BAD_REQUEST);
@@ -111,6 +113,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(RewardNotFoundException.class)
     public ResponseEntity<String> handleRewardNotFoundException(RewardNotFoundException e) {
         return new ResponseEntity<>(rewardNotFoundExceptionMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidClaimRewardRequestException.class)
+    public ResponseEntity<String> handleInvalidClaimRewardRequestException(InvalidClaimRewardRequestException e) {
+        return new ResponseEntity<>(invalidClaimRewardRequestExceptionMessage, HttpStatus.BAD_REQUEST);
     }
 }
 

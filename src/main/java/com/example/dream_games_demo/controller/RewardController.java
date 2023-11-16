@@ -1,5 +1,6 @@
 package com.example.dream_games_demo.controller;
 
+import com.example.dream_games_demo.exceptions.InvalidClaimRewardRequestException;
 import com.example.dream_games_demo.exceptions.RewardNotFoundException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.requests.ClaimRewardRequest;
@@ -23,7 +24,7 @@ public class RewardController {
     @PutMapping
     public ResponseEntity<String> claimReward(@RequestBody ClaimRewardRequest request){
         if(request == null || request.getPlayerId() == null || !(request.getPlayerId() instanceof  Long)){
-            //throw new InvalidClaimRewardRequestException();
+            throw new InvalidClaimRewardRequestException();
         }
         Long player_id = request.getPlayerId();
         Player player = playerService.findPlayerById(player_id); //if there's no such player, this will throw an exception.

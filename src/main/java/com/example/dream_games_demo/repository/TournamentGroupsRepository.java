@@ -27,11 +27,11 @@ public interface TournamentGroupsRepository extends JpaRepository<TournamentGrou
     @Query("SELECT tg FROM TournamentGroup tg WHERE tg.tournament.id = :tournamentId")
     Optional<List<TournamentGroup>> findAllGroupsByTournament(@Param("tournamentId") Long tournament_id);
 
-    @Query("SELECT tg " +
-            "FROM TournamentGroup tg " +
-            "WHERE tg.player.id = :playerId AND " +
-            "tg.is_active = false " +
+    @Query("SELECT tg FROM TournamentGroup tg WHERE tg.is_active = false AND " +
+            "(tg.player1.id = :player_id OR tg.player2.id = :player_id OR " +
+            "tg.player3.id = :player_id OR tg.player4.id = :player_id OR " +
+            "tg.player5.id = :player_id) " +
             "ORDER BY tg.id DESC " +
             "LIMIT 1")
-    Optional<TournamentGroup> findLastGroupOfPlayer(@Param("playerId") Long playerId);
+    Optional<TournamentGroup> findLastGroupOfPlayer(@Param("player_id") Long playerId);
 }
