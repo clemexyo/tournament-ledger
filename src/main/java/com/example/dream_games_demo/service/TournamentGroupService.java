@@ -136,6 +136,13 @@ public class TournamentGroupService {
             return "Player's rank in tournament group: " + tournament_group_id + " ,is " + rank;
         }
     }
+    public List<TournamentGroup> findAllGroupsByTournament(Long tournament_id){
+        Optional<List<TournamentGroup>> optionalTournamentGroups = tournamentGroupsRepository.findAllGroupsByTournament(tournament_id);
+        if(optionalTournamentGroups.get().isEmpty()){
+            throw new NoTournamentGroupFoundException();
+        }
+        return optionalTournamentGroups.get();
+    }
     private Boolean uniqueCountry(Player player, TournamentGroup currentGroup){
         String newPlayerCountry = player.getCountry();
         List<String> counties = currentGroup.tournamentPlayerCountries();

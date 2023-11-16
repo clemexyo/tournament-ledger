@@ -2,6 +2,7 @@ package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.exceptions.NoPlayerFoundException;
 import com.example.dream_games_demo.exceptions.NoRewardsFoundException;
+import com.example.dream_games_demo.exceptions.NoScoreFoundException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Rewards;
 import com.example.dream_games_demo.model.Tournament;
@@ -44,13 +45,11 @@ public class RewardsService {
             tournamentGroup.setTotal_group_score(total_group_score);
         }
     }
-    public List<Player> getWinnerAndSecond(Long tournament_group_id, Long tournament_id) {
-        Optional<List<Player>> winnerAndSecond = rewardsRepository.findWinnerAndSecondOfGroup(tournament_group_id, tournament_id);
-        if(winnerAndSecond.get().isEmpty()){
-            throw new NoPlayerFoundException();
+    public List<Rewards> getScoresByTournament(Long tournament_id){
+        Optional<List<Rewards>> optionalRewards = rewardsRepository.findByTournament(tournament_id);
+        if(optionalRewards.get().isEmpty()){
+            throw new NoScoreFoundException();
         }
-        else {
-            return winnerAndSecond.get();
-        }
+        return optionalRewards.get();
     }
 }
