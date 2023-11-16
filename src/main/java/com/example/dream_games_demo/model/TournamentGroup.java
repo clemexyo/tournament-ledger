@@ -20,27 +20,24 @@ public class TournamentGroup {
     @ManyToOne
     @JoinColumn(name = "player1_id")
     private Player player1;
-
     @ManyToOne
     @JoinColumn(name = "player2_id")
     private Player player2;
-
     @ManyToOne
     @JoinColumn(name = "player3_id")
     private Player player3;
-
     @ManyToOne
     @JoinColumn(name = "player4_id")
     private Player player4;
-
     @ManyToOne
     @JoinColumn(name = "player5_id")
     private Player player5;
-
     @ManyToOne
     @JoinColumn(name = "winner_id")
     private Player winner;
-
+    @ManyToOne
+    @JoinColumn(name = "second_id")
+    private Player second;
     @Column(columnDefinition = "bigint default 0")
     private Long total_group_score;
 
@@ -120,6 +117,9 @@ public class TournamentGroup {
     }
     public boolean getIsActive() { return this.is_active; }
     public void setWinner(Player winner) { this.winner = winner; }
+    public Player getWinner() { return this.winner; }
+    public void setSecond(Player player) { this.second = player; }
+    public Player getSecond() { return this.second; }
     public Long getId() { return this.id; }
     public Long getTotal_group_score() { return this.total_group_score; }
     public void setTotal_group_score(Long group_score) { this.total_group_score = group_score; }

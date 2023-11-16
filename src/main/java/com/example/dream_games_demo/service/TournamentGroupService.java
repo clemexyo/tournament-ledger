@@ -143,6 +143,7 @@ public class TournamentGroupService {
             //winner and the second have to claim their rewards
             //in order to leave the group
             tournamentGroup.setWinner(rewardsOfTheGroupOrderedByPlayerScore.get(0).getPlayer());
+            tournamentGroup.setSecond(rewardsOfTheGroupOrderedByPlayerScore.get(1).getPlayer());
             for(int i = 2; i < rewardsOfTheGroupOrderedByPlayerScore.size(); i++){
                 rewardsOfTheGroupOrderedByPlayerScore.get(i).getPlayer().setCan_enter(true);
                 playerRepository.save(rewardsOfTheGroupOrderedByPlayerScore.get(i).getPlayer());
