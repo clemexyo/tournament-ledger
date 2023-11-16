@@ -57,7 +57,9 @@ public class Player {
     public void setCan_enter(Boolean updatedCan_enter) { this.can_enter = updatedCan_enter; }
     @Override
     public String toString(){
-        return "{user_name: " + user_name + ", id: " + id + ", leve: " + level + ", coins: " + coins + ", country: " + country + ", can_enter: " + can_enter + "}";
+        return "{user_name: " + user_name + ", id: " + id + ", level: " + level + ", coins: " + coins + ", country: " + country + ", can_enter: " + can_enter + "}";
     }
+    public void payToEnter() { this.coins -= 1000; }
+    public void getPaymentBack() { this.coins += 1000; }
 }
 

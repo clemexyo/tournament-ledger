@@ -67,7 +67,7 @@ public class TournamentService {
         tournamentRepository.save(tournament);
     }
 
-    @Scheduled(cron = "0 20 * * * *")
+    @Scheduled(cron = "0 0/1 * * * *")
     public void endTournament(){
         Optional<Tournament> latestTournament = tournamentRepository.findTopByOrderByIdDesc();
         if(latestTournament.isPresent()){

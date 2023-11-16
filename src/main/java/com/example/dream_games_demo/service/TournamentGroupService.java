@@ -34,6 +34,7 @@ public class TournamentGroupService {
             TournamentGroup tournamentGroup = new TournamentGroup(player, latest_tournament);
             //playerService.playerEnteredGroup(player.getId());
             player.setCan_enter(false);
+            player.payToEnter();
             tournamentGroupsRepository.save(tournamentGroup);
             rewardsService.createReward(player, latest_tournament, tournamentGroup);
             to_return = tournamentGroup;
@@ -54,6 +55,7 @@ public class TournamentGroupService {
             if(uniqueCountry(player, currentGroup)){
                 try {
                     addPlayer(player, currentGroup);
+                    player.payToEnter();
                     if(currentGroup.isFull()){
                         currentGroup.setIsActive(true);
                         tournamentGroupsRepository.save(currentGroup);
@@ -142,6 +144,8 @@ public class TournamentGroupService {
             //all players except winner and second will leave.
             //winner and the second have to claim their rewards
             //in order to leave the group
+            //here we're not adding the prizes of winner and second because they need to
+            //send a ClaimReward request to get them.
             tournamentGroup.setWinner(rewardsOfTheGroupOrderedByPlayerScore.get(0).getPlayer());
             tournamentGroup.setSecond(rewardsOfTheGroupOrderedByPlayerScore.get(1).getPlayer());
             for(int i = 2; i < rewardsOfTheGroupOrderedByPlayerScore.size(); i++){
@@ -151,8 +155,11 @@ public class TournamentGroupService {
         }
         else {
             //this means tournament never began in the first place, all remaining player will leave.
+            //here players will also get their 1000 coins back since they never got to start playing
             for(Rewards currentReward: rewardsOfTheGroupOrderedByPlayerScore){
-                currentReward.getPlayer().setCan_enter(true);
+                Player currentPlayer = currentReward.getPlayer();
+                currentPlayer.setCan_enter(true);
+                currentPlayer.getPaymentBack();
                 playerRepository.save(currentReward.getPlayer());
             }
         }
