@@ -1,6 +1,7 @@
 package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.exceptions.NoTournamentGroupFoundException;
+import com.example.dream_games_demo.exceptions.RewardNotFoundException;
 import com.example.dream_games_demo.exceptions.UnableToAddPlayerToGroupException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Rewards;
@@ -171,6 +172,15 @@ public class TournamentGroupService {
         }
         else {
             throw new NoTournamentGroupFoundException();
+        }
+    }
+    public TournamentGroup findLastGroupOfPlayer(Long player_id){
+        Optional<TournamentGroup> optionalTournamentGroup = tournamentGroupsRepository.findLastGroupOfPlayer(player_id);
+        if(optionalTournamentGroup.isPresent()){
+            return optionalTournamentGroup.get();
+        }
+        else {
+            throw new RewardNotFoundException();
         }
     }
 }

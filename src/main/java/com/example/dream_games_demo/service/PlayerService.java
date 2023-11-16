@@ -13,6 +13,7 @@ import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
+import javax.swing.text.html.Option;
 import java.util.*;
 
 
@@ -37,9 +38,14 @@ public class PlayerService {
         return playersStringList;
     }
 
-    public Optional<Player> findPlayerById(Long id){
-        return playerRepository.findById(id);
-
+    public Player findPlayerById(Long id){
+        Optional<Player> optionalPlayer = playerRepository.findById(id);
+        if(optionalPlayer.isPresent()){
+            return optionalPlayer.get();
+        }
+        else{
+            throw new PlayerNotFoundException();
+        }
     }
 
     public String createPlayer(String user_name){
@@ -103,5 +109,17 @@ public class PlayerService {
            throw new PlayerNotFoundException();
         }
         return can_enter;
+    }
+    public void claimReward(Player player){
+        TournamentGroup tournamentGroup = tournamentGroupService.findLastGroupOfPlayer(player.getId());
+        if(player.getId() == tournamentGroup.getWinner().getId()){
+            player.getWinnerPrize();
+        }
+        else if(player.getId() == tournamentGroup.getSecond().getId()){
+            player.getSecondPrize();
+        }
+        else{
+            throw new RewardNotFoundException();
+        }
     }
 }

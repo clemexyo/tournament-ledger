@@ -46,7 +46,7 @@ public class TournamentService {
         Optional<List<TournamentGroup>> optionalPendingTournamentGroups = tournamentGroupService.findPendingTournamentGroups();
         TournamentGroup to_return = null;
         //at this point we know the player that sent the request is valid
-        Player player = playerService.findPlayerById(playerId).get();
+        Player player = playerService.findPlayerById(playerId);
         if(!optionalPendingTournamentGroups.get().isEmpty()){
             List<TournamentGroup> pendingTournamentGroups = optionalPendingTournamentGroups.get();
 

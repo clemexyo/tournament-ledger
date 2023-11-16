@@ -61,5 +61,7 @@ public class Player {
     }
     public void payToEnter() { this.coins -= 1000; }
     public void getPaymentBack() { this.coins += 1000; }
+    public void getWinnerPrize() { this.coins += 10000; }
+    public void getSecondPrize() { this.coins += 5000; }
 }
 
