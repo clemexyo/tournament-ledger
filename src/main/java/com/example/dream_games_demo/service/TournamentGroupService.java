@@ -10,6 +10,7 @@ import com.example.dream_games_demo.repository.TournamentGroupsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import java.util.ArrayList;
 import java.util.List;
 import java.util.Optional;
 
@@ -49,7 +50,7 @@ public class TournamentGroupService {
             if(uniqueCountry(player, currentGroup)){
                 try {
                     addPlayer(player, currentGroup);
-                    if(currentGroup.isReadyToStart()){
+                    if(currentGroup.isFull()){
                         currentGroup.setIsActive(true);
                         tournamentGroupsRepository.save(currentGroup);
                     }
@@ -74,19 +75,19 @@ public class TournamentGroupService {
         }
         return to_return;
     }
-    public String generateLeaderBoard(TournamentGroup tournamentGroup){
-        List<Rewards> playersOrderedByGroupScore = rewardsService.orderedPlayers(tournamentGroup);
+    public String generateLeaderBoard(TournamentGroup tournamentGroup, Long tournament_id){
+        List<Rewards> rewardsOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup, tournament_id);
         StringBuilder leaderBoard = new StringBuilder();
 
-        if(!tournamentGroup.isReadyToStart()){
-            leaderBoard.append("The group is not yet ready to start. Waiting for other players to join\n");
+        if(!tournamentGroup.isFull()){
+            leaderBoard.append("The group is not full.\n");
         }
         leaderBoard.append("Players from highest score to lowest:\n");
-        for(Rewards currentInstance: playersOrderedByGroupScore){
-            Long player_id = currentInstance.getPlayer().getId();
-            String player_name = currentInstance.getPlayer().getUserName();
-            String player_country = currentInstance.getPlayer().getCountry();
-            Long current_score = currentInstance.getScore();
+        for(Rewards currentReward: rewardsOrderedByPlayerScore){
+            Long player_id = currentReward.getPlayer().getId();
+            String player_name = currentReward.getPlayer().getUserName();
+            String player_country = currentReward.getPlayer().getCountry();
+            Long current_score = currentReward.getScore();
 
             leaderBoard.append("--- ").append(player_id).append(", ").append(player_name)
                     .append(", ").append(player_country).append(", ")
@@ -98,13 +99,13 @@ public class TournamentGroupService {
         return tournamentGroupsRepository.findTournamentGroupByPlayerId(player_id);
     }
     public void endTournamentGroups(Long tournament_id){
-        Optional<List<TournamentGroup>> optionalActiveGroups = tournamentGroupsRepository.findAllActivesByTournament(tournament_id);
-        if(!optionalActiveGroups.get().isEmpty()){
-            List<TournamentGroup> activeGroups = optionalActiveGroups.get();
-            for(TournamentGroup currentGroup: activeGroups){
+        Optional<List<TournamentGroup>> optionalGroups = tournamentGroupsRepository.findAllGroupsByTournament(tournament_id);
+        if(!optionalGroups.get().isEmpty()){
+            List<TournamentGroup> tournamentGroups = optionalGroups.get();
+            for(TournamentGroup currentGroup: tournamentGroups){
                 currentGroup.setIsActive(false);
-                List<Player> winnerAndSecond = rewardsService.getWinnerAndSecond(currentGroup.getId(), tournament_id);
-                currentGroup.setWinner(winnerAndSecond.get(0));
+                tournamentGroupsRepository.save(currentGroup);
+                playerLeaveTheGroup(currentGroup, tournament_id);
             }
         }
         else {
@@ -119,6 +120,7 @@ public class TournamentGroupService {
         for(String currentCountry: counties){
             if(currentCountry.equals(newPlayerCountry)){
                 unique = false;
+                break;
             }
         }
         return unique;
@@ -128,6 +130,30 @@ public class TournamentGroupService {
        tournamentGroupsRepository.save(currentGroup);
        //playerService.playerEnteredGroup(player.getId());
         player.setCan_enter(false);
+    }
+    private void playerLeaveTheGroup(TournamentGroup tournamentGroup, Long tournament_id){
+        List<Rewards> rewardsOfTheGroupOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup, tournament_id);
+
+        List<Player> players = new ArrayList<>();
+
+        for(Rewards currentReward: rewardsOfTheGroupOrderedByPlayerScore){
+            players.add(currentReward.getPlayer());
+        }
+
+        if(tournamentGroup.isFull()){
+            //all players except winner and second will leave
+            for(int i = 2; i < players.size(); i++){
+                players.get(i).setCan_enter(true);
+            }
+        }
+        else {
+            //this means tournament never began in the first place, all remaining player will leave.
+            for(Player currentPlayer: players){
+                currentPlayer.setCan_enter(true);
+            }
+        }
+
+
     }
 
 }

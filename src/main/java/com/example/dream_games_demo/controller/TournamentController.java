@@ -40,15 +40,17 @@ public class TournamentController {
         }
         Long player_id = request.getPlayerId();
         TournamentGroup tournamentGroup = null;
+        Tournament tournament = null;
         boolean playerStatus = playerService.playerStatus(player_id);
 
         if(playerStatus){
             List<Object> tournamentStatus = tournamentService.tournamentStatus();
             if((Boolean) tournamentStatus.get(0)){
-                tournamentGroup = tournamentService.enterTournament(player_id, (Tournament) tournamentStatus.get(1));
+                tournament = (Tournament) tournamentStatus.get(1);
+                tournamentGroup = tournamentService.enterTournament(player_id, tournament);
             }
         }
-        return new ResponseEntity<String>(tournamentGroupService.generateLeaderBoard(tournamentGroup), HttpStatus.OK);
+        return new ResponseEntity<String>(tournamentGroupService.generateLeaderBoard(tournamentGroup, tournament.getId()), HttpStatus.OK);
 
     }
 }

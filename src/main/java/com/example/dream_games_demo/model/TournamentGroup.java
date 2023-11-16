@@ -97,7 +97,7 @@ public class TournamentGroup {
             throw new IllegalStateException("No empty column available to assign the player.");
         }
     }
-    public boolean isReadyToStart(){
+    public boolean isFull(){
         return this.player1 != null &&
                 this.player2 != null &&
                 this.player3 != null &&

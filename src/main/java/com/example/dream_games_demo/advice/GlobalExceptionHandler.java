@@ -38,6 +38,8 @@ public class GlobalExceptionHandler {
     private String unableToUpdatePlayerLevelMessage;
     @Value("${error.messages.tournamentGroupsNotFoundMessage}")
     private String tournamentGroupsNotFoundMessage;
+    @Value("${error.messages.noRewardsFoundMessage}")
+    private String noRewardsFoundMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -94,6 +96,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoTournamentGroupFoundException.class)
     public ResponseEntity<String> handleTournamentGroupsNotFoundException(NoTournamentGroupFoundException e) {
         return new ResponseEntity<>(tournamentGroupsNotFoundMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NoRewardsFoundException.class)
+    public ResponseEntity<String> handleNoRewardsFoundException(NoRewardsFoundException e) {
+        return new ResponseEntity<>(noRewardsFoundMessage, HttpStatus.BAD_REQUEST);
     }
 }
 
