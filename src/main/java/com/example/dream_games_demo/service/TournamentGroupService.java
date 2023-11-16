@@ -6,9 +6,11 @@ import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Rewards;
 import com.example.dream_games_demo.model.Tournament;
 import com.example.dream_games_demo.model.TournamentGroup;
+import com.example.dream_games_demo.repository.PlayerRepository;
 import com.example.dream_games_demo.repository.TournamentGroupsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.transaction.annotation.Transactional;
 
 import java.util.ArrayList;
 import java.util.List;
@@ -20,6 +22,8 @@ public class TournamentGroupService {
     private TournamentGroupsRepository tournamentGroupsRepository;
     @Autowired
     private RewardsService rewardsService;
+    @Autowired
+    private PlayerRepository playerRepository;
 
     public Optional<List<TournamentGroup>> findPendingTournamentGroups(){
         return tournamentGroupsRepository.findPendingTournamentGroups();
@@ -105,7 +109,7 @@ public class TournamentGroupService {
             for(TournamentGroup currentGroup: tournamentGroups){
                 currentGroup.setIsActive(false);
                 tournamentGroupsRepository.save(currentGroup);
-                playerLeaveTheGroup(currentGroup, tournament_id);
+                playersLeaveTheGroup(currentGroup, tournament_id);
             }
         }
         else {
@@ -131,29 +135,25 @@ public class TournamentGroupService {
        //playerService.playerEnteredGroup(player.getId());
         player.setCan_enter(false);
     }
-    private void playerLeaveTheGroup(TournamentGroup tournamentGroup, Long tournament_id){
+    private void playersLeaveTheGroup(TournamentGroup tournamentGroup, Long tournament_id){
         List<Rewards> rewardsOfTheGroupOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup, tournament_id);
 
-        List<Player> players = new ArrayList<>();
-
-        for(Rewards currentReward: rewardsOfTheGroupOrderedByPlayerScore){
-            players.add(currentReward.getPlayer());
-        }
-
         if(tournamentGroup.isFull()){
-            //all players except winner and second will leave
-            for(int i = 2; i < players.size(); i++){
-                players.get(i).setCan_enter(true);
+            //all players except winner and second will leave.
+            //winner and the second have to claim their rewards
+            //in order to leave the group
+            tournamentGroup.setWinner(rewardsOfTheGroupOrderedByPlayerScore.get(0).getPlayer());
+            for(int i = 2; i < rewardsOfTheGroupOrderedByPlayerScore.size(); i++){
+                rewardsOfTheGroupOrderedByPlayerScore.get(i).getPlayer().setCan_enter(true);
+                playerRepository.save(rewardsOfTheGroupOrderedByPlayerScore.get(i).getPlayer());
             }
         }
         else {
             //this means tournament never began in the first place, all remaining player will leave.
-            for(Player currentPlayer: players){
-                currentPlayer.setCan_enter(true);
+            for(Rewards currentReward: rewardsOfTheGroupOrderedByPlayerScore){
+                currentReward.getPlayer().setCan_enter(true);
+                playerRepository.save(currentReward.getPlayer());
             }
         }
-
-
     }
-
 }
