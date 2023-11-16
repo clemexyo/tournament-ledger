@@ -67,12 +67,16 @@ public class TournamentService {
         tournamentRepository.save(tournament);
     }
 
-    @Scheduled(cron = "0 0 20 * * *")
+    @Scheduled(cron = "0 0/1 * * * *")
     public void endTournament(){
         Optional<Tournament> latestTournament = tournamentRepository.findTopByOrderByIdDesc();
         if(latestTournament.isPresent()){
             latestTournament.get().endTournament();
             tournamentRepository.save(latestTournament.get());
+            tournamentGroupService.endTournamentGroups(latestTournament.get().getId());
+        }
+        else{
+            throw new TournamentNotFoundException();
         }
 
     }

@@ -1,20 +1,16 @@
 package com.example.dream_games_demo.service;
 
+import com.example.dream_games_demo.exceptions.NoTournamentGroupFoundException;
 import com.example.dream_games_demo.exceptions.UnableToAddPlayerToGroupException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Rewards;
 import com.example.dream_games_demo.model.Tournament;
 import com.example.dream_games_demo.model.TournamentGroup;
-import com.example.dream_games_demo.repository.PlayerRepository;
 import com.example.dream_games_demo.repository.TournamentGroupsRepository;
-import com.example.dream_games_demo.repository.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
-import java.util.HashMap;
 import java.util.List;
-import java.util.Map;
 import java.util.Optional;
 
 @Service
@@ -100,6 +96,20 @@ public class TournamentGroupService {
     }
     public Optional<TournamentGroup> isPlayerInActiveGroup(Long player_id){
         return tournamentGroupsRepository.findTournamentGroupByPlayerId(player_id);
+    }
+    public void endTournamentGroups(Long tournament_id){
+        Optional<List<TournamentGroup>> optionalActiveGroups = tournamentGroupsRepository.findAllActivesByTournament(tournament_id);
+        if(!optionalActiveGroups.get().isEmpty()){
+            List<TournamentGroup> activeGroups = optionalActiveGroups.get();
+            for(TournamentGroup currentGroup: activeGroups){
+                currentGroup.setIsActive(false);
+                List<Player> winnerAndSecond = rewardsService.getWinnerAndSecond(currentGroup.getId(), tournament_id);
+                currentGroup.setWinner(winnerAndSecond.get(0));
+            }
+        }
+        else {
+            throw new NoTournamentGroupFoundException();
+        }
     }
     private Boolean uniqueCountry(Player player, TournamentGroup currentGroup){
         String newPlayerCountry = player.getCountry();

@@ -1,7 +1,6 @@
 package com.example.dream_games_demo.advice;
 
 import com.example.dream_games_demo.exceptions.*;
-import com.example.dream_games_demo.requests.EnterTournamentRequest;
 import org.springframework.beans.factory.annotation.Value;
 import org.springframework.http.HttpStatus;
 import org.springframework.web.bind.annotation.ExceptionHandler;
@@ -37,6 +36,8 @@ public class GlobalExceptionHandler {
     private String unableToAddPlayerToTournamentGroupMessage;
     @Value("${error.messages.unableToUpdatePlayerLevelMessage}")
     private String unableToUpdatePlayerLevelMessage;
+    @Value("${error.messages.tournamentGroupsNotFoundMessage}")
+    private String tournamentGroupsNotFoundMessage;
 
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
@@ -89,6 +90,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(UpdatePlayerLevelRequestException.class)
     public ResponseEntity<String> handleUpdatePlayerLevelRequestException(UpdatePlayerLevelRequestException e) {
         return new ResponseEntity<>(unableToUpdatePlayerLevelMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(NoTournamentGroupFoundException.class)
+    public ResponseEntity<String> handleTournamentGroupsNotFoundException(NoTournamentGroupFoundException e) {
+        return new ResponseEntity<>(tournamentGroupsNotFoundMessage, HttpStatus.BAD_REQUEST);
     }
 }
 

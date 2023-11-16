@@ -26,6 +26,7 @@ public class Tournament {
     public Boolean getisActive(){
         return this.is_active;
     }
+    public Long getId() { return this.id; }
 
     public void endTournament(){
         this.is_active = false;
