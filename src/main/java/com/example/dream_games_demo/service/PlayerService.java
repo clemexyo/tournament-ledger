@@ -8,7 +8,6 @@ import com.example.dream_games_demo.repository.PlayerRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 
 
@@ -21,7 +20,7 @@ public class PlayerService {
     @Autowired
     private TournamentGroupService tournamentGroupService;
     @Autowired
-    private RewardsService rewardsService;
+    private ScoresService scoresService;
     public List<String> allPlayers(){
         List<Player> playersObjectList = playerRepository.findAll();
         if(playersObjectList.isEmpty()){
@@ -71,7 +70,7 @@ public class PlayerService {
             player.setLevel(level + 1);
 
             if(playerInActiveGroup != null){
-                rewardsService.incrementPlayerScore(player.getId(), playerInActiveGroup);
+                scoresService.incrementPlayerScore(player.getId(), playerInActiveGroup);
             }
             playerRepository.save(player);
             return player.toString();

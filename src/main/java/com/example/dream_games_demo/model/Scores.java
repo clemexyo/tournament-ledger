@@ -1,13 +1,12 @@
 package com.example.dream_games_demo.model;
 
-import jakarta.ejb.Local;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
 
 @Entity
-@Table(name = "rewards")
-public class Rewards {
+@Table(name = "scores")
+public class Scores {
     @Id
     @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
@@ -28,14 +27,14 @@ public class Rewards {
     private TournamentGroup tournament_group;
 
     private LocalDateTime latest_update;
-    public Rewards() {
+    public Scores() {
         this.player = null;
         this.player_score = 0L;
         this.tournament = null;
         this.tournament_group = null;
         this.latest_update = LocalDateTime.now();
     }
-    public Rewards(Player player, Tournament tournament, TournamentGroup tournament_group) {
+    public Scores(Player player, Tournament tournament, TournamentGroup tournament_group) {
         this.player = player;
         this.tournament = tournament;
         this.tournament_group = tournament_group;

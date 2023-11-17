@@ -5,7 +5,7 @@ import com.example.dream_games_demo.exceptions.RewardNotFoundException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.requests.ClaimRewardRequest;
 import com.example.dream_games_demo.service.PlayerService;
-import com.example.dream_games_demo.service.RewardsService;
+import com.example.dream_games_demo.service.ScoresService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -16,9 +16,9 @@ import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/reward")
-public class RewardController {
+public class ScoreController {
     @Autowired
-    private RewardsService rewardsService;
+    private ScoresService scoresService;
     @Autowired
     private PlayerService playerService;
     @PutMapping

@@ -4,12 +4,11 @@ import com.example.dream_games_demo.exceptions.NoTournamentGroupFoundException;
 import com.example.dream_games_demo.exceptions.RewardNotFoundException;
 import com.example.dream_games_demo.exceptions.UnableToAddPlayerToGroupException;
 import com.example.dream_games_demo.model.Player;
-import com.example.dream_games_demo.model.Rewards;
+import com.example.dream_games_demo.model.Scores;
 import com.example.dream_games_demo.model.Tournament;
 import com.example.dream_games_demo.model.TournamentGroup;
 import com.example.dream_games_demo.repository.PlayerRepository;
 import com.example.dream_games_demo.repository.TournamentGroupsRepository;
-import com.example.dream_games_demo.repository.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 import java.util.List;
@@ -20,7 +19,7 @@ public class TournamentGroupService {
     @Autowired
     private TournamentGroupsRepository tournamentGroupsRepository;
     @Autowired
-    private RewardsService rewardsService;
+    private ScoresService scoresService;
     @Autowired
     private PlayerRepository playerRepository;
 
@@ -35,7 +34,7 @@ public class TournamentGroupService {
             player.setCan_enter(false);
             player.payToEnter();
             tournamentGroupsRepository.save(tournamentGroup);
-            rewardsService.createReward(player, latest_tournament, tournamentGroup);
+            scoresService.createScore(player, latest_tournament, tournamentGroup);
             to_return = tournamentGroup;
         }
         catch (IllegalStateException e){
@@ -59,7 +58,7 @@ public class TournamentGroupService {
                         currentGroup.setIsActive(true);
                         tournamentGroupsRepository.save(currentGroup);
                     }
-                    rewardsService.createReward(player, latest_tournament, currentGroup);
+                    scoresService.createScore(player, latest_tournament, currentGroup);
                     to_return = currentGroup;
                     placed = true;
                     break;
@@ -81,14 +80,14 @@ public class TournamentGroupService {
         return to_return;
     }
     public String generateLeaderBoard(TournamentGroup tournamentGroup){
-        List<Rewards> rewardsOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup);
+        List<Scores> scoresOrderedByPlayerScore = scoresService.orderedScoresByPlayerScore(tournamentGroup);
         StringBuilder leaderBoard = new StringBuilder();
 
         if(!tournamentGroup.isFull()){
             leaderBoard.append("The group is not full.\n");
         }
         leaderBoard.append("Players from highest score to lowest:\n");
-        for(Rewards currentReward: rewardsOrderedByPlayerScore){
+        for(Scores currentReward: scoresOrderedByPlayerScore){
             Long player_id = currentReward.getPlayer().getId();
             String player_name = currentReward.getPlayer().getUserName();
             String player_country = currentReward.getPlayer().getCountry();
@@ -126,7 +125,7 @@ public class TournamentGroupService {
     }
     public String getPlayerGroupRank(Long player_id, Long tournament_group_id){
         TournamentGroup tournamentGroup = findById(tournament_group_id);
-        List<Rewards> temp = rewardsService.orderedRewardsByPlayerScore(tournamentGroup);
+        List<Scores> temp = scoresService.orderedScoresByPlayerScore(tournamentGroup);
 
         int rank = 0;
         for(int i = 0; i < temp.size(); i++){
@@ -168,7 +167,7 @@ public class TournamentGroupService {
         player.setCan_enter(false);
     }
     private void playersLeaveTheGroup(TournamentGroup tournamentGroup){
-        List<Rewards> rewardsOfTheGroupOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup);
+        List<Scores> scoresOfTheGroupOrderedByPlayerScore = scoresService.orderedScoresByPlayerScore(tournamentGroup);
 
         if(tournamentGroup.isFull()){
             //all players except winner and second will leave.
@@ -176,17 +175,17 @@ public class TournamentGroupService {
             //in order to leave the group
             //here we're not adding the prizes of winner and second because they need to
             //send a ClaimReward request to get them.
-            setWinnerAndSecond(rewardsOfTheGroupOrderedByPlayerScore, tournamentGroup);
-            for(int i = 2; i < rewardsOfTheGroupOrderedByPlayerScore.size(); i++){
-                Player currentPlayer = rewardsOfTheGroupOrderedByPlayerScore.get(i).getPlayer();
+            setWinnerAndSecond(scoresOfTheGroupOrderedByPlayerScore, tournamentGroup);
+            for(int i = 2; i < scoresOfTheGroupOrderedByPlayerScore.size(); i++){
+                Player currentPlayer = scoresOfTheGroupOrderedByPlayerScore.get(i).getPlayer();
                 currentPlayer.setCan_enter(true);
                 playerRepository.save(currentPlayer);
             }
         }
         else {
-            //this means tournament never began in the first place, all remaining player will leave.
+            //this means tournament never began in the first place, all remaining players will leave.
             //here players will also get their 1000 coins back since they never got to start playing
-            for(Rewards currentReward: rewardsOfTheGroupOrderedByPlayerScore){
+            for(Scores currentReward: scoresOfTheGroupOrderedByPlayerScore){
                 Player currentPlayer = currentReward.getPlayer();
                 currentPlayer.setCan_enter(true);
                 currentPlayer.getPaymentBack();
@@ -209,10 +208,10 @@ public class TournamentGroupService {
             return optionalTournamentGroup.get();
         }
         else {
-            throw new RewardNotFoundException();
+            throw new NoTournamentGroupFoundException();
         }
     }
-    private void setWinnerAndSecond(List<Rewards> orderedRewards, TournamentGroup tournamentGroup){
+    private void setWinnerAndSecond(List<Scores> orderedRewards, TournamentGroup tournamentGroup){
         Long first_score = orderedRewards.get(0).getScore();
         Long second_score = orderedRewards.get(1).getScore();
         if(first_score == 0) { //this means nobody played the game.
@@ -226,11 +225,16 @@ public class TournamentGroupService {
         else {
             tournamentGroup.setWinner(orderedRewards.get(0).getPlayer());
             Player second = second_score != 0 ? orderedRewards.get(1).getPlayer() : null; //the player does not deserve any rewards if they have 0 scores.
-            tournamentGroup.setSecond(second);
             if(second == null){
                 orderedRewards.get(1).getPlayer().setCan_enter(true);
+                playerRepository.save(orderedRewards.get(1).getPlayer());
             }
-            playerRepository.save(second);
+            else{
+                tournamentGroup.setSecond(second);
+                second.setCan_enter(false); //just to be sure.
+                playerRepository.save(second);
+            }
+
         }
         tournamentGroupsRepository.save(tournamentGroup);
     }

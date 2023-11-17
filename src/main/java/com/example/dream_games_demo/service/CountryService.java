@@ -5,9 +5,8 @@ import com.example.dream_games_demo.exceptions.CreateCountryException;
 import com.example.dream_games_demo.exceptions.NoCountryFoundException;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
-import com.example.dream_games_demo.model.Rewards;
+import com.example.dream_games_demo.model.Scores;
 import com.example.dream_games_demo.repository.CountryRepository;
-import jakarta.persistence.Tuple;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
@@ -21,7 +20,7 @@ public class CountryService {
     @Autowired
     private CountryRepository countryRepository;
     @Autowired
-    private RewardsService rewardsService;
+    private ScoresService scoresService;
     public String createCountry(String country_name){
         try {
             Country newCountry = new Country(country_name);
@@ -46,20 +45,20 @@ public class CountryService {
         return optionalCountry.get();
     }
     public String generateCountriesLeaderBoard(Long tournament_id){
-        List<Rewards> allScoresOfTheTournament = rewardsService.getScoresByTournament(tournament_id);
+        List<Scores> allScoresOfTheTournament = scoresService.getScoresByTournament(tournament_id);
         List<Country> allCountries = allCountries();
 
         //now sort the scores of the tournament with respect to latest_update ascending order,
         //this way we will have the latest updated score as the last element of the list.
         //this information of the latest update will be useful if we encounter countries that have the same total score.
         //the country that has the higher latest_update value will be higher in the leaderboard.
-        allScoresOfTheTournament.sort(Comparator.comparing(Rewards::getLatestUpdate));
+        allScoresOfTheTournament.sort(Comparator.comparing(Scores::getLatestUpdate));
 
         Map<String, String> CountryToScoreMap = new HashMap<>();
         for(Country currentCountry : allCountries){
             Long total_score_of_current_country = 0L;
             String latest_update = "";
-            for(Rewards currentScore : allScoresOfTheTournament){
+            for(Scores currentScore : allScoresOfTheTournament){
                 if(Objects.equals(currentCountry.getName(), currentScore.getPlayer().getCountry())) {
                     total_score_of_current_country += currentScore.getScore();
                     latest_update = currentScore.getLatestUpdate().toString();
@@ -77,12 +76,12 @@ public class CountryService {
         return countriesLeaderBoard;
     }
     public String generateCountryLeaderBoard(Long tournament_id, Long country_id) {
-        List<Rewards> allScoresOfTheTournament = rewardsService.getScoresByTournament(tournament_id);
+        List<Scores> allScoresOfTheTournament = scoresService.getScoresByTournament(tournament_id);
         Country country = findCountryById(country_id);
 
         Long total_score_country = 0L;
         Map<String, String> playersToScoreMap = new HashMap<String, String>();
-        for(Rewards currentScore : allScoresOfTheTournament) {
+        for(Scores currentScore : allScoresOfTheTournament) {
             Player currentPlayer = currentScore.getPlayer();
             if(Objects.equals(country.getName(), currentPlayer.getCountry())) {
                 total_score_country += currentScore.getScore();
@@ -95,7 +94,7 @@ public class CountryService {
         Map<String, String> sorted = sortByValues(playersToScoreMap);
         String countryLeaderBoard = "Total score of " + country.getName() + " is " +
                 total_score_country + " and its players sorted by the score:\n" +
-                "(in case of players with equal scores, they are sorted with respect to latest score achievement.\n)";
+                "(in case of players with equal scores, they are sorted with respect to latest score achievement.)\n";
         for(Map.Entry<String, String> entry : sorted.entrySet()) {
             countryLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue().split("%")[0] + " ---\n";
         }

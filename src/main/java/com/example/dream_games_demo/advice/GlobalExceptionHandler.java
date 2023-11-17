@@ -38,16 +38,14 @@ public class GlobalExceptionHandler {
     private String unableToUpdatePlayerLevelMessage;
     @Value("${error.messages.tournamentGroupsNotFoundMessage}")
     private String tournamentGroupsNotFoundMessage;
-    @Value("${error.messages.noRewardsFoundMessage}")
-    private String noRewardsFoundMessage;
+    @Value("${error.messages.noScoresFoundMessage}")
+    private String noScoresFoundMessage;
     @Value("${error.messages.invalidGetLeaderBoardRequestMessage}")
     private String invalidGetLeaderBoardRequestMessage;
     @Value("${error.messages.rewardNotFoundExceptionMessage}")
     private String rewardNotFoundExceptionMessage;
     @Value("${error.messages.invalidClaimRewardRequestExceptionMessage}")
     private String invalidClaimRewardRequestExceptionMessage;
-    @Value("${error.messages.noScoreFoundExceptionMessage}")
-    private String noScoreFoundExceptionMessage;
     @Value("${error.messages.invalidGetPlayerGroupRankExceptionMessage}")
     private String invalidGetPlayerGroupRankExceptionMessage;
     @Value("${error.messages.invalidGetCountryLeaderBoardRequestExceptionMessage}")
@@ -114,9 +112,9 @@ public class GlobalExceptionHandler {
     public ResponseEntity<String> handleTournamentGroupsNotFoundException(NoTournamentGroupFoundException e) {
         return new ResponseEntity<>(tournamentGroupsNotFoundMessage, HttpStatus.BAD_REQUEST);
     }
-    @ExceptionHandler(NoRewardsFoundException.class)
-    public ResponseEntity<String> handleNoRewardsFoundException(NoRewardsFoundException e) {
-        return new ResponseEntity<>(noRewardsFoundMessage, HttpStatus.BAD_REQUEST);
+    @ExceptionHandler(NoScoresFoundException.class)
+    public ResponseEntity<String> handleNoScoresFoundException(NoScoresFoundException e) {
+        return new ResponseEntity<>(noScoresFoundMessage, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(InvalidGetLeaderBoardRequestException.class)
     public ResponseEntity<String> handleInvalidGetLeaderBoardRequestException(InvalidGetLeaderBoardRequestException e) {
@@ -129,10 +127,6 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidClaimRewardRequestException.class)
     public ResponseEntity<String> handleInvalidClaimRewardRequestException(InvalidClaimRewardRequestException e) {
         return new ResponseEntity<>(invalidClaimRewardRequestExceptionMessage, HttpStatus.BAD_REQUEST);
-    }
-    @ExceptionHandler(NoScoreFoundException.class)
-    public ResponseEntity<String> handleNoScoreFoundException(NoScoreFoundException e) {
-        return new ResponseEntity<>(noScoreFoundExceptionMessage, HttpStatus.BAD_REQUEST);
     }
     @ExceptionHandler(InvalidGetPlayerGroupRankException.class)
     public ResponseEntity<String> handleInvalidGetPlayerGroupRankException(InvalidGetPlayerGroupRankException e) {
