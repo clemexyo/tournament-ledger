@@ -101,5 +101,6 @@ public class PlayerService {
         else{
             throw new RewardNotFoundException();
         }
+        playerRepository.save(player);
     }
 }
