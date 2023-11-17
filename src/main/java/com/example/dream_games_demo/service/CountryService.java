@@ -1,6 +1,7 @@
 package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.exceptions.CreateCountryException;
+import com.example.dream_games_demo.exceptions.NoCountryFoundException;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Rewards;
 import com.example.dream_games_demo.model.TournamentGroup;
@@ -27,11 +28,15 @@ public class CountryService {
 
     }
     public List<Country> allCountries(){
-        return countryRepository.findAll();
+        List<Country> allCountries = countryRepository.findAll();
+        if(allCountries.isEmpty()){
+            throw new NoCountryFoundException();
+        }
+        return allCountries;
     }
     public String generateCountriesLeaderBoard(Long tournament_id){
         List<Rewards> allScoresOfTheTournament = rewardsService.getScoresByTournament(tournament_id);
-        List<Country> allCountries = countryRepository.findAll();
+        List<Country> allCountries = allCountries();
 
         Map<String, Long> CountryToScoreMap = new HashMap<String, Long>();
         for(Country currentCountry : allCountries){
@@ -49,6 +54,10 @@ public class CountryService {
             countriesLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue() + " ---\n";
         }
         return countriesLeaderBoard;
+    }
+    public String generateCountryLeaderBoard(Long tournament_id, Long country_id) {
+        //List<Rewards> allScoresOfTheTournament
+        return "to be implemented.";
     }
     // function to sort hashmap by values
     private Map<String, Long> sortMapByValue(Map<String, Long> map){

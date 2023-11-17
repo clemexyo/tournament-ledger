@@ -36,7 +36,7 @@ public class CountryController {
         if(tournament_id == null || country_id == null){
             throw new InvalidGetCountryLeaderBoardRequestException();
         }
-        String countryLeaderBoard = "";
+        String countryLeaderBoard = countryService.generateCountryLeaderBoard(tournament_id, country_id);
         return new ResponseEntity<>(countryLeaderBoard, HttpStatus.OK);
     }
 }

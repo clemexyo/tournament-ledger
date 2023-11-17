@@ -52,6 +52,10 @@ public class GlobalExceptionHandler {
     private String invalidGetPlayerGroupRankExceptionMessage;
     @Value("${error.messages.invalidGetCountryLeaderBoardRequestExceptionMessage}")
     private String invalidGetCountryLeaderBoardRequestExceptionMessage;
+    @Value("${error.messages.noCountryFoundExceptionMessage}")
+    private String noCountryFoundExceptionMessage;
+    @Value("${error.messages.countryNotFoundExceptionMessage}")
+    private String countryNotFoundExceptionMessage;
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
         return new ResponseEntity<>(noPlayerFoundMessage, HttpStatus.BAD_REQUEST);
@@ -135,6 +139,14 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(InvalidGetCountryLeaderBoardRequestException.class)
     public ResponseEntity<String> handleInvalidGetCountryLeaderBoardException(InvalidGetCountryLeaderBoardRequestException e) {
         return new ResponseEntity<>(invalidGetCountryLeaderBoardRequestExceptionMessage, HttpStatus.OK);
+    }
+    @ExceptionHandler(NoCountryFoundException.class)
+    public ResponseEntity<String> handleNoCountryFoundException(NoCountryFoundException e) {
+        return new ResponseEntity<>(noCountryFoundExceptionMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(CountryNotFoundException.class)
+    public ResponseEntity<String> handleCountryNotFoundException(CountryNotFoundException e) {
+        return new ResponseEntity<>(countryNotFoundExceptionMessage, HttpStatus.BAD_REQUEST);
     }
 }
 
