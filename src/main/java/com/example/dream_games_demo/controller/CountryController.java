@@ -1,6 +1,7 @@
 package com.example.dream_games_demo.controller;
 
 import com.example.dream_games_demo.exceptions.InvalidCreateCountryRequestException;
+import com.example.dream_games_demo.exceptions.InvalidGetCountryLeaderBoardRequestException;
 import com.example.dream_games_demo.requests.CreateCountryRequest;
 import com.example.dream_games_demo.service.CountryService;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -33,7 +34,7 @@ public class CountryController {
             @PathVariable(name = "tournament_id") Long tournament_id,
             @PathVariable(name = "country_id") Long country_id) {
         if(tournament_id == null || country_id == null){
-            //throw new InvalidGetCountryLeaderBoardException();
+            throw new InvalidGetCountryLeaderBoardRequestException();
         }
         String countryLeaderBoard = "";
         return new ResponseEntity<>(countryLeaderBoard, HttpStatus.OK);
