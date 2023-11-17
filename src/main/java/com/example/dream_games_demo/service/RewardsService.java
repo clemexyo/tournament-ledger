@@ -44,6 +44,9 @@ public class RewardsService {
             total_group_score += 1;
             tournamentGroup.setTotal_group_score(total_group_score);
         }
+        else {
+            throw new NoRewardsFoundException();
+        }
     }
     public List<Rewards> getScoresByTournament(Long tournament_id){
         Optional<List<Rewards>> optionalRewards = rewardsRepository.findByTournament(tournament_id);

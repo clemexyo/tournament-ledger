@@ -24,7 +24,7 @@ public class TournamentGroupController {
         }
         TournamentGroup tournamentGroup = tournamentGroupService.findById(tournament_group_id);
 
-        String leaderBoard = tournamentGroupService.generateLeaderBoard(tournamentGroup, tournament_id);
+        String leaderBoard = tournamentGroupService.generateLeaderBoard(tournamentGroup);
         return new ResponseEntity<String>(leaderBoard, HttpStatus.OK);
     }
     @GetMapping("/player-rank/{player_id}/{tournament_group_id}")

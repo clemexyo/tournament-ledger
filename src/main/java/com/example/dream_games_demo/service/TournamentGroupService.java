@@ -82,7 +82,7 @@ public class TournamentGroupService {
         }
         return to_return;
     }
-    public String generateLeaderBoard(TournamentGroup tournamentGroup, Long tournament_id){
+    public String generateLeaderBoard(TournamentGroup tournamentGroup){
         List<Rewards> rewardsOrderedByPlayerScore = rewardsService.orderedRewardsByPlayerScore(tournamentGroup);
         StringBuilder leaderBoard = new StringBuilder();
 
@@ -102,8 +102,12 @@ public class TournamentGroupService {
         }
         return leaderBoard.toString();
     }
-    public Optional<TournamentGroup> isPlayerInActiveGroup(Long player_id){
-        return tournamentGroupsRepository.findTournamentGroupByPlayerId(player_id);
+    public TournamentGroup isPlayerInActiveGroup(Long player_id){
+        Optional<TournamentGroup> optionalTournamentGroup = tournamentGroupsRepository.findTournamentGroupByPlayerId(player_id);
+        if(optionalTournamentGroup.isPresent()) {
+            return optionalTournamentGroup.get();
+        }
+        return null;
     }
     public void endTournamentGroups(Long tournament_id){
         Optional<List<TournamentGroup>> optionalGroups = tournamentGroupsRepository.findAllGroupsByTournament(tournament_id);

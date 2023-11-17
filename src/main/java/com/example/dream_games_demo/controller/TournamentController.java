@@ -50,7 +50,7 @@ public class TournamentController {
                 tournamentGroup = tournamentService.enterTournament(player_id, tournament);
             }
         }
-        return new ResponseEntity<String>(tournamentGroupService.generateLeaderBoard(tournamentGroup, tournament.getId()), HttpStatus.OK);
+        return new ResponseEntity<String>(tournamentGroupService.generateLeaderBoard(tournamentGroup), HttpStatus.OK);
 
     }
 }

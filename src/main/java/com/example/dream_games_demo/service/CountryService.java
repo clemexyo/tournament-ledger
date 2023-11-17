@@ -6,7 +6,6 @@ import com.example.dream_games_demo.exceptions.NoCountryFoundException;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Rewards;
-import com.example.dream_games_demo.model.TournamentGroup;
 import com.example.dream_games_demo.repository.CountryRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
@@ -27,7 +26,6 @@ public class CountryService {
         }catch (Exception e){
             throw new CreateCountryException();
         }
-
     }
     public List<Country> allCountries(){
         List<Country> allCountries = countryRepository.findAll();
@@ -47,11 +45,11 @@ public class CountryService {
         List<Rewards> allScoresOfTheTournament = rewardsService.getScoresByTournament(tournament_id);
         List<Country> allCountries = allCountries();
 
-        Map<String, Long> CountryToScoreMap = new HashMap<String, Long>();
+        Map<String, Long> CountryToScoreMap = new HashMap<>();
         for(Country currentCountry : allCountries){
             Long total_score_of_current_country = 0L;
             for(Rewards currentScore : allScoresOfTheTournament){
-                if(currentCountry.getName() == currentScore.getPlayer().getCountry()) {
+                if(Objects.equals(currentCountry.getName(), currentScore.getPlayer().getCountry())) {
                     total_score_of_current_country += currentScore.getScore();
                 }
             }
@@ -72,7 +70,7 @@ public class CountryService {
         Map<String, Long> playersToScoreMap = new HashMap<String, Long>();
         for(Rewards currentScore : allScoresOfTheTournament) {
             Player currentPlayer = currentScore.getPlayer();
-            if(country.getName() == currentPlayer.getCountry()) {
+            if(Objects.equals(country.getName(), currentPlayer.getCountry())) {
                 total_score_country += currentScore.getScore();
                 String player_info = "user name: " + currentPlayer.getUserName() + ", player id: " + currentPlayer.getId();
                 playersToScoreMap.put(player_info, currentScore.getScore());
@@ -91,7 +89,7 @@ public class CountryService {
         List<Map.Entry<String, Long>> list = new ArrayList<> (map.entrySet ());
 
         // Sort the list using a lambda expression
-        list.sort ((e1, e2) -> e1.getValue ().compareTo (e2.getValue ()));
+        list.sort(Map.Entry.<String, Long>comparingByValue().reversed());
 
         // Create a linked hash map to preserve the order
         Map<String, Long> sortedMap = new LinkedHashMap<> ();

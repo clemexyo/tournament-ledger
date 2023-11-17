@@ -19,7 +19,6 @@ import java.util.*;
 
 @Service
 public class PlayerService {
-
     @Autowired
     private PlayerRepository playerRepository;
     @Autowired
@@ -28,16 +27,17 @@ public class PlayerService {
     private TournamentGroupService tournamentGroupService;
     @Autowired
     private RewardsService rewardsService;
-
     public List<String> allPlayers(){
         List<Player> playersObjectList = playerRepository.findAll();
+        if(playersObjectList.isEmpty()){
+            throw new NoPlayerFoundException();
+        }
         List<String> playersStringList = new ArrayList<String>();
         for (Player currentPlayer : playersObjectList) {
             playersStringList.add(currentPlayer.toString());
         }
         return playersStringList;
     }
-
     public Player findPlayerById(Long id){
         Optional<Player> optionalPlayer = playerRepository.findById(id);
         if(optionalPlayer.isPresent()){
@@ -47,7 +47,6 @@ public class PlayerService {
             throw new PlayerNotFoundException();
         }
     }
-
     public String createPlayer(String user_name){
         try{
             Player player = new Player(user_name);
@@ -66,56 +65,42 @@ public class PlayerService {
         }
 
     }
-
     public String updateLevel(Long id){
-        Optional<Player> optional = playerRepository.findById(id);
-        if(optional.isPresent()) {
-            try{
-                Player player = optional.get();
-                Optional<TournamentGroup> playerInActiveGroup = tournamentGroupService.isPlayerInActiveGroup(player.getId());
+        Player player = findPlayerById(id);
+        try{
+            TournamentGroup playerInActiveGroup = tournamentGroupService.isPlayerInActiveGroup(player.getId());
+            Long level = player.getLevel();
+            Long coins = player.getCoins();
 
-                Long level = player.getLevel();
-                Long coins = player.getCoins();
+            player.setCoins(coins + 25);
+            player.setLevel(level + 1);
 
-                player.setCoins(coins + 25);
-                player.setLevel(level + 1);
-                if(playerInActiveGroup.isPresent()){
-                    rewardsService.incrementPlayerScore(player.getId(), playerInActiveGroup.get());
-                }
-                playerRepository.save(player);
-                return player.toString();
-            }catch (Exception e){
-                throw new UpdatePlayerLevelRequestException();
+            if(playerInActiveGroup != null){
+                rewardsService.incrementPlayerScore(player.getId(), playerInActiveGroup);
             }
-        }
-        else{
-            throw new PlayerNotFoundException();
+            playerRepository.save(player);
+            return player.toString();
+        }catch (Exception e){
+            throw new UpdatePlayerLevelRequestException();
         }
     }
-
     public boolean playerStatus(Long id){
         boolean can_enter = false;
-        Optional<Player> optionalPlayer = playerRepository.findById(id);
-        if(optionalPlayer.isPresent()){
-            Player player = optionalPlayer.get();
-            if(player.getCan_enter() && player.getCoins() >= 1000 && player.getLevel() >= 20){
-                can_enter = true;
-            }
-            else {
-                throw new PlayerCannotEnterTournamentException();
-            }
+        Player player = findPlayerById(id);
+        if(player.getCan_enter() && player.getCoins() >= 1000 && player.getLevel() >= 20){
+            can_enter = true;
         }
-        else{
-           throw new PlayerNotFoundException();
+        else {
+            throw new PlayerCannotEnterTournamentException();
         }
         return can_enter;
     }
     public void claimReward(Player player){
         TournamentGroup tournamentGroup = tournamentGroupService.findLastGroupOfPlayer(player.getId());
-        if(player.getId() == tournamentGroup.getWinner().getId()){
+        if(Objects.equals(player.getId(), tournamentGroup.getWinner().getId())){
             player.getWinnerPrize();
         }
-        else if(player.getId() == tournamentGroup.getSecond().getId()){
+        else if(Objects.equals(player.getId(), tournamentGroup.getSecond().getId())){
             player.getSecondPrize();
         }
         else{
