@@ -1,19 +1,14 @@
 package com.example.dream_games_demo.service;
 
-import com.example.dream_games_demo.exceptions.NoTournamentGroupFoundException;
 import com.example.dream_games_demo.exceptions.TournamentNotActiveException;
 import com.example.dream_games_demo.exceptions.TournamentNotFoundException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Tournament;
 import com.example.dream_games_demo.model.TournamentGroup;
-import com.example.dream_games_demo.repository.PlayerRepository;
-import com.example.dream_games_demo.repository.TournamentGroupsRepository;
 import com.example.dream_games_demo.repository.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.http.HttpStatus;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-
 import java.util.*;
 
 @Service

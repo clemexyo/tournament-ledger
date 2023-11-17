@@ -4,13 +4,8 @@ import com.example.dream_games_demo.exceptions.*;
 import com.example.dream_games_demo.model.Country;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.TournamentGroup;
-import com.example.dream_games_demo.repository.CountryRepository;
 import com.example.dream_games_demo.repository.PlayerRepository;
-import com.example.dream_games_demo.repository.TournamentGroupsRepository;
-import com.example.dream_games_demo.repository.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Value;
-import org.springframework.http.HttpStatus;
 import org.springframework.stereotype.Service;
 
 import javax.swing.text.html.Option;
