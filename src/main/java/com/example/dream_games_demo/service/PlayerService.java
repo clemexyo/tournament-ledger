@@ -44,7 +44,6 @@ public class PlayerService {
     public String createPlayer(String user_name){
         try{
             Player player = new Player(user_name);
-            playerRepository.save(player);
 
             List<Country> allCountries = countryService.allCountries();
             Random random = new Random();
