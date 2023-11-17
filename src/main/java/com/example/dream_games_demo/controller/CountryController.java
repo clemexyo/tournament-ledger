@@ -28,4 +28,14 @@ public class CountryController {
         String countriesLeaderBoard = countryService.generateCountriesLeaderBoard(tournament_id);
         return new ResponseEntity<>(countriesLeaderBoard, HttpStatus.OK);
     }
+    @GetMapping("/leaderboard/{tournament_id}/{country_id}")
+    public ResponseEntity<String> getCountryLeaderBoard(
+            @PathVariable(name = "tournament_id") Long tournament_id,
+            @PathVariable(name = "country_id") Long country_id) {
+        if(tournament_id == null || country_id == null){
+            //throw new InvalidGetCountryLeaderBoardException();
+        }
+        String countryLeaderBoard = "";
+        return new ResponseEntity<>(countryLeaderBoard, HttpStatus.OK);
+    }
 }

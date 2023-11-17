@@ -43,7 +43,7 @@ public class CountryService {
             }
             CountryToScoreMap.put(currentCountry.getName(), total_score_of_current_country);
         }
-        Map<String, Long> sortedByScore = sortByValue(CountryToScoreMap);
+        Map<String, Long> sortedByScore = sortMapByValue(CountryToScoreMap);
         String countriesLeaderBoard = "Countries from highest score to lowest:\n";
         for(Map.Entry<String, Long> entry : CountryToScoreMap.entrySet()) {
             countriesLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue() + " ---\n";
@@ -51,25 +51,22 @@ public class CountryService {
         return countriesLeaderBoard;
     }
     // function to sort hashmap by values
-    private Map<String, Long> sortByValue(Map<String, Long> hm)
-    {
-        // Create a list from elements of HashMap
-        List<Map.Entry<String, Long> > list
-                = new LinkedList<Map.Entry<String, Long> >(
-                hm.entrySet());
+    private Map<String, Long> sortMapByValue(Map<String, Long> map){
+        // Create a list of map entries
+        List<Map.Entry<String, Long>> list = new ArrayList<> (map.entrySet ());
 
-        // Sort the list using lambda expression
-        Collections.sort(
-                list,
-                (i1,
-                 i2) -> i1.getValue().compareTo(i2.getValue()));
+        // Sort the list using a lambda expression
+        list.sort ((e1, e2) -> e1.getValue ().compareTo (e2.getValue ()));
 
-        // put data from sorted list to hashmap
-        Map<String, Long> temp
-                = new LinkedHashMap<String, Long>();
-        for (Map.Entry<String, Long> aa : list) {
-            temp.put(aa.getKey(), aa.getValue());
+        // Create a linked hash map to preserve the order
+        Map<String, Long> sortedMap = new LinkedHashMap<> ();
+
+        // Iterate over the sorted list and put the entries to the sorted map
+        for (Map.Entry<String, Long> entry : list) {
+            sortedMap.put (entry.getKey (), entry.getValue ());
         }
-        return temp;
+
+        // Return the sorted map
+        return sortedMap;
     }
 }

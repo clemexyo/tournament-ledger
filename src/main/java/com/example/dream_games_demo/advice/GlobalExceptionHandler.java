@@ -48,6 +48,8 @@ public class GlobalExceptionHandler {
     private String invalidClaimRewardRequestExceptionMessage;
     @Value("${error.messages.noScoreFoundExceptionMessage}")
     private String noScoreFoundExceptionMessage;
+    @Value("${error.messages.invalidGetPlayerGroupRankExceptionMessage}")
+    private String invalidGetPlayerGroupRankExceptionMessage;
     @ExceptionHandler(NoPlayerFoundException.class)
     public ResponseEntity<String> handleNoPlayerFoundException(NoPlayerFoundException e){
         return new ResponseEntity<>(noPlayerFoundMessage, HttpStatus.BAD_REQUEST);
@@ -123,6 +125,10 @@ public class GlobalExceptionHandler {
     @ExceptionHandler(NoScoreFoundException.class)
     public ResponseEntity<String> handleNoScoreFoundException(NoScoreFoundException e) {
         return new ResponseEntity<>(noScoreFoundExceptionMessage, HttpStatus.BAD_REQUEST);
+    }
+    @ExceptionHandler(InvalidGetPlayerGroupRankException.class)
+    public ResponseEntity<String> handleInvalidGetPlayerGroupRankException(InvalidGetPlayerGroupRankException e) {
+        return new ResponseEntity<>(invalidGetPlayerGroupRankExceptionMessage, HttpStatus.BAD_REQUEST);
     }
 }
 
