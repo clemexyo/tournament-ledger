@@ -1,8 +1,10 @@
 package com.example.dream_games_demo.service;
 
+import com.example.dream_games_demo.exceptions.CountryNotFoundException;
 import com.example.dream_games_demo.exceptions.CreateCountryException;
 import com.example.dream_games_demo.exceptions.NoCountryFoundException;
 import com.example.dream_games_demo.model.Country;
+import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Rewards;
 import com.example.dream_games_demo.model.TournamentGroup;
 import com.example.dream_games_demo.repository.CountryRepository;
@@ -50,14 +52,35 @@ public class CountryService {
         }
         Map<String, Long> sortedByScore = sortMapByValue(CountryToScoreMap);
         String countriesLeaderBoard = "Countries from highest score to lowest:\n";
-        for(Map.Entry<String, Long> entry : CountryToScoreMap.entrySet()) {
+        for(Map.Entry<String, Long> entry : sortedByScore.entrySet()) {
             countriesLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue() + " ---\n";
         }
         return countriesLeaderBoard;
     }
     public String generateCountryLeaderBoard(Long tournament_id, Long country_id) {
-        //List<Rewards> allScoresOfTheTournament
-        return "to be implemented.";
+        List<Rewards> allScoresOfTheTournament = rewardsService.getScoresByTournament(tournament_id);
+        Optional<Country> optionalCountry = countryRepository.findById(country_id);
+        if(!optionalCountry.isPresent()) {
+            throw new CountryNotFoundException();
+        }
+        Country country = optionalCountry.get();
+
+        Long total_score_country = 0L;
+        Map<String, Long> playersToScoreMap = new HashMap<String, Long>();
+        for(Rewards currentScore : allScoresOfTheTournament) {
+            Player currentPlayer = currentScore.getPlayer();
+            if(country.getName() == currentPlayer.getCountry()) {
+                total_score_country += currentScore.getScore();
+                String player_info = "user name: " + currentPlayer.getUserName() + ", player id: " + currentPlayer.getId();
+                playersToScoreMap.put(player_info, currentScore.getScore());
+            }
+        }
+        Map<String, Long> sorted = sortMapByValue(playersToScoreMap);
+        String countryLeaderBoard = "Total score of " + country.getName() + " and its players sorted by the score:\n";
+        for(Map.Entry<String, Long> entry : sorted.entrySet()) {
+            countryLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue() + " ---\n";
+        }
+        return countryLeaderBoard;
     }
     // function to sort hashmap by values
     private Map<String, Long> sortMapByValue(Map<String, Long> map){
