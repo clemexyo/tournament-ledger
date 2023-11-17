@@ -66,13 +66,13 @@ public class CountryService {
                 }
             }
             CountryToScoreMap.put(currentCountry.getName(),
-                            (total_score_of_current_country.toString() + "-" + latest_update));
+                            (total_score_of_current_country.toString() + "%" + latest_update));
         }
         Map<String, String> sortedByScore = sortByValues(CountryToScoreMap);
         String countriesLeaderBoard = "Countries from highest score to lowest:\n" +
                 "(in case of countries with equal scores, they are sorted with respect to latest score achievement)\n";
         for(Map.Entry<String, String> entry : sortedByScore.entrySet()) {
-            countriesLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue().split("-")[0] + " ---\n";
+            countriesLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue().split("%")[0] + " ---\n";
         }
         return countriesLeaderBoard;
     }
@@ -89,7 +89,7 @@ public class CountryService {
                 String player_info = "user name: " + currentPlayer.getUserName() + ", player id: " + currentPlayer.getId();
                 String player_update_time = currentScore.getLatestUpdate().toString();
                 playersToScoreMap.put(player_info,
-                        (currentScore.getScore().toString() + "-" + player_update_time));
+                        (currentScore.getScore().toString() + "%" + player_update_time));
             }
         }
         Map<String, String> sorted = sortByValues(playersToScoreMap);
@@ -97,7 +97,7 @@ public class CountryService {
                 total_score_country + " and its players sorted by the score:\n" +
                 "(in case of players with equal scores, they are sorted with respect to latest score achievement.\n)";
         for(Map.Entry<String, String> entry : sorted.entrySet()) {
-            countryLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue().split("-")[0] + " ---\n";
+            countryLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue().split("%")[0] + " ---\n";
         }
         return countryLeaderBoard;
     }
@@ -105,7 +105,7 @@ public class CountryService {
     private static Map<String, String> sortByValues(Map<String, String> map) {
         return map.entrySet()
                 .stream()
-                .sorted(Map.Entry.<String, String>comparingByValue(MapValueComparator::compareValues).reversed())
+                .sorted(Map.Entry.<String, String>comparingByValue(MapValueComparator::compareValues))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
@@ -116,8 +116,8 @@ public class CountryService {
 
     private static class MapValueComparator {
         private static int compareValues(String value1, String value2) {
-            String[] parts1 = value1.split("-");
-            String[] parts2 = value2.split("-");
+            String[] parts1 = value1.split("%");
+            String[] parts2 = value2.split("%");
 
             // Parse Long and LocalDateTime components
             Long longValue1 = Long.parseLong(parts1[0]);

@@ -24,8 +24,8 @@ public class TournamentGroupService {
     @Autowired
     private PlayerRepository playerRepository;
 
-    public Optional<List<TournamentGroup>> findPendingTournamentGroups(){
-        return tournamentGroupsRepository.findPendingTournamentGroups();
+    public Optional<List<TournamentGroup>> findPendingTournamentGroups(Long tournament_id){
+        return tournamentGroupsRepository.findPendingTournamentGroups(tournament_id);
     }
     public TournamentGroup createGroupAndAssignPlayer(Player player, Tournament latest_tournament){
         TournamentGroup to_return = null;
@@ -218,11 +218,19 @@ public class TournamentGroupService {
         if(first_score == 0) { //this means nobody played the game.
             tournamentGroup.setWinner(null);
             tournamentGroup.setSecond(null);
+            orderedRewards.get(0).getPlayer().setCan_enter(true);
+            orderedRewards.get(1).getPlayer().setCan_enter(true);
+            playerRepository.save(orderedRewards.get(0).getPlayer());
+            playerRepository.save(orderedRewards.get(1).getPlayer());
         }
         else {
             tournamentGroup.setWinner(orderedRewards.get(0).getPlayer());
             Player second = second_score != 0 ? orderedRewards.get(1).getPlayer() : null; //the player does not deserve any rewards if they have 0 scores.
             tournamentGroup.setSecond(second);
+            if(second == null){
+                orderedRewards.get(1).getPlayer().setCan_enter(true);
+            }
+            playerRepository.save(second);
         }
         tournamentGroupsRepository.save(tournamentGroup);
     }

@@ -28,7 +28,7 @@ public class RewardController {
         }
         Long player_id = request.getPlayerId();
         Player player = playerService.findPlayerById(player_id); //if there's no such player, this will throw an exception.
-        if(!player.getCan_enter()){
+        if(player.getCan_enter()){
             throw new RewardNotFoundException();
         }
         playerService.claimReward(player);

@@ -28,7 +28,7 @@ public class TournamentService {
         throw new TournamentNotActiveException();
     }
     public TournamentGroup enterTournament(Long playerId, Tournament latest_tournament){
-        Optional<List<TournamentGroup>> optionalPendingTournamentGroups = tournamentGroupService.findPendingTournamentGroups();
+        Optional<List<TournamentGroup>> optionalPendingTournamentGroups = tournamentGroupService.findPendingTournamentGroups(latest_tournament.getId());
         TournamentGroup to_return = null;
         //at this point we know the player that sent the request is valid
         Player player = playerService.findPlayerById(playerId);
@@ -52,10 +52,12 @@ public class TournamentService {
         tournamentRepository.save(tournament);
     }
 
-    @Scheduled(cron = "0 0 20 * * *")
+    @Scheduled(cron = "0 0/1 * * * *")
     public void endTournament(){
         Tournament latestTournament = findLatestTournament();
-
+        if(!latestTournament.getisActive()){
+            throw new TournamentNotActiveException();
+        }
         latestTournament.endTournament();
         tournamentRepository.save(latestTournament);
         tournamentGroupService.endTournamentGroups(latestTournament.getId());

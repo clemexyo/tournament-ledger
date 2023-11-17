@@ -14,10 +14,10 @@ import java.util.Optional;
 public interface TournamentGroupsRepository extends JpaRepository<TournamentGroup, Long> {
 
     @Query("SELECT tg FROM TournamentGroup tg " +
-            "WHERE tg.is_active = false AND " +
+            "WHERE tg.is_active = false AND tg.tournament.id = :tournament_id AND " +
             "(tg.player1 IS NULL OR tg.player2 IS NULL OR tg.player3 IS NULL OR tg.player4 IS NULL OR tg.player5 IS NULL) " +
             "ORDER BY tg.id ASC")
-    Optional<List<TournamentGroup>> findPendingTournamentGroups();
+    Optional<List<TournamentGroup>> findPendingTournamentGroups(@Param("tournament_id") Long tournament_id);
 
     @Query("SELECT tg FROM TournamentGroup tg WHERE tg.is_active = true AND " +
             "(tg.player1.id = :player_id OR tg.player2.id = :player_id OR " +
