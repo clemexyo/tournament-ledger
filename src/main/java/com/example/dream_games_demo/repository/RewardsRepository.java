@@ -16,9 +16,8 @@ import java.util.Optional;
 public interface RewardsRepository extends JpaRepository<Rewards, Long> {
     @Query("SELECT r " +
             "FROM Rewards r " +
-            "WHERE r.tournament_group.id = :tournamentGroupId " +
-            "ORDER BY r.player_score DESC")
-    Optional<List<Rewards>> groupRewardsOrderedByPlayerScore(@Param("tournamentGroupId") Long tournamentGroupId);
+            "WHERE r.tournament_group.id = :tournamentGroupId")
+    Optional<List<Rewards>> getAllScoresOfTournament(@Param("tournamentGroupId") Long tournamentGroupId);
 
     @Query("SELECT r FROM Rewards r WHERE r.tournament_group.id = :tournamentGroupId AND r.player.id = :playerId")
     Optional<Rewards> findByPlayerAndTournamentGroup(@Param("playerId") Long playerId, @Param("tournamentGroupId") Long tournamentGroupId);

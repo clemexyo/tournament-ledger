@@ -9,6 +9,8 @@ import com.example.dream_games_demo.model.TournamentGroup;
 import com.example.dream_games_demo.repository.RewardsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
+import java.util.Comparator;
 import java.util.List;
 import java.util.Optional;
 
@@ -21,29 +23,40 @@ public class RewardsService {
         Rewards reward = new Rewards(player, tournament, tournamentGroup);
         rewardsRepository.save(reward);
     }
-    public List<Rewards> orderedRewardsByPlayerScore(TournamentGroup tournamentGroup){
-        Optional<List<Rewards>> optionalGroupRewardsOrderedByPlayerScore = rewardsRepository.groupRewardsOrderedByPlayerScore(tournamentGroup.getId());
-        if(!optionalGroupRewardsOrderedByPlayerScore.get().isEmpty()){
-            return optionalGroupRewardsOrderedByPlayerScore.get();
-        }
-        else {
+    public List<Rewards> getAllScoresOfTournament(Long tournament_id){
+        Optional<List<Rewards>> optionalRewards = rewardsRepository.getAllScoresOfTournament(tournament_id);
+        if(!optionalRewards.isPresent()) {
             throw new NoRewardsFoundException();
         }
+        return optionalRewards.get();
+    }
+    public List<Rewards> orderedRewardsByPlayerScore(TournamentGroup tournamentGroup){
+        List<Rewards> rewardsOfTournament = getAllScoresOfTournament(tournamentGroup.getId());
+
+        // Order the list based on score and then latest_update
+        rewardsOfTournament.sort(
+                Comparator.comparing(Rewards::getScore, Comparator.reverseOrder())
+                        .thenComparing(Rewards::getLatestUpdate, Comparator.reverseOrder())
+        );
+        return rewardsOfTournament;
     }
     public void incrementPlayerScore(Long player_id, TournamentGroup tournamentGroup){
-        Optional<Rewards> optionalReward = rewardsRepository.findByPlayerAndTournamentGroup(player_id, tournamentGroup.getId());
-        if(optionalReward.isPresent()){
-            Long player_score = optionalReward.get().getScore();
-            player_score += 1;
-            optionalReward.get().setScore(player_score);
+        Rewards reward = findByPlayerAndTournamentGroup(player_id, tournamentGroup.getId());
 
-            Long total_group_score = tournamentGroup.getTotal_group_score();
-            total_group_score += 1;
-            tournamentGroup.setTotal_group_score(total_group_score);
-        }
-        else {
+        reward.incrementPlayerScore();
+        reward.setLatestUpdateToNow();
+        rewardsRepository.save(reward);
+
+        Long total_group_score = tournamentGroup.getTotal_group_score();
+        total_group_score += 1;
+        tournamentGroup.setTotal_group_score(total_group_score);
+    }
+    private Rewards findByPlayerAndTournamentGroup(Long player_id, Long tournament_group_id) {
+        Optional<Rewards> optionalRewards = rewardsRepository.findByPlayerAndTournamentGroup(player_id, tournament_group_id);
+        if(optionalRewards.isEmpty()) {
             throw new NoRewardsFoundException();
         }
+        return optionalRewards.get();
     }
     public List<Rewards> getScoresByTournament(Long tournament_id){
         Optional<List<Rewards>> optionalRewards = rewardsRepository.findByTournament(tournament_id);

@@ -20,22 +20,12 @@ public class TournamentService {
     @Autowired
     private TournamentGroupService tournamentGroupService;
 
-    public List<Object> tournamentStatus(){
-        boolean valid_tournament = false;
-        Optional<Tournament> optionalTournament = tournamentRepository.findTopByOrderByIdDesc();
-        if(optionalTournament.isPresent()){
-            Tournament tournament = optionalTournament.get();
-            if(tournament.getisActive()){
-                valid_tournament = true;
-            }
-            else{
-                throw new TournamentNotActiveException();
-            }
+    public Tournament tournamentStatus(){
+        Tournament tournament = findLatestTournament(); //throws TournamentNotFoundException is there's no tournament.
+        if(tournament.getisActive()){
+            return tournament;
         }
-        else{
-            throw new TournamentNotFoundException();
-        }
-        return Arrays.asList(valid_tournament, optionalTournament.get());
+        throw new TournamentNotActiveException();
     }
     public TournamentGroup enterTournament(Long playerId, Tournament latest_tournament){
         Optional<List<TournamentGroup>> optionalPendingTournamentGroups = tournamentGroupService.findPendingTournamentGroups();
@@ -62,16 +52,19 @@ public class TournamentService {
         tournamentRepository.save(tournament);
     }
 
-    @Scheduled(cron = "0 0/1 * * * *")
+    @Scheduled(cron = "0 0 20 * * *")
     public void endTournament(){
-        Optional<Tournament> latestTournament = tournamentRepository.findTopByOrderByIdDesc();
-        if(latestTournament.isPresent()){
-            latestTournament.get().endTournament();
-            tournamentRepository.save(latestTournament.get());
-            tournamentGroupService.endTournamentGroups(latestTournament.get().getId());
-        }
-        else{
+        Tournament latestTournament = findLatestTournament();
+
+        latestTournament.endTournament();
+        tournamentRepository.save(latestTournament);
+        tournamentGroupService.endTournamentGroups(latestTournament.getId());
+    }
+    private Tournament findLatestTournament() {
+        Optional<Tournament> optionalTournament = tournamentRepository.findTopByOrderByIdDesc();
+        if(!optionalTournament.isPresent()) {
             throw new TournamentNotFoundException();
         }
+        return optionalTournament.get();
     }
 }
