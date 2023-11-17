@@ -1,6 +1,7 @@
 package com.example.dream_games_demo.controller;
 
 import com.example.dream_games_demo.exceptions.InvalidCreateCountryRequestException;
+import com.example.dream_games_demo.exceptions.InvalidGetCountriesLeaderBoardRequestException;
 import com.example.dream_games_demo.exceptions.InvalidGetCountryLeaderBoardRequestException;
 import com.example.dream_games_demo.requests.CreateCountryRequest;
 import com.example.dream_games_demo.service.CountryService;
@@ -26,6 +27,9 @@ public class CountryController {
     }
     @GetMapping("/leaderboard/{tournament_id}")
     public ResponseEntity<String> getCountriesLeaderBoard(@PathVariable(name = "tournament_id") Long tournament_id){
+        if(tournament_id == null || !(tournament_id instanceof Long)) {
+            throw new InvalidGetCountriesLeaderBoardRequestException();
+        }
         String countriesLeaderBoard = countryService.generateCountriesLeaderBoard(tournament_id);
         return new ResponseEntity<>(countriesLeaderBoard, HttpStatus.OK);
     }

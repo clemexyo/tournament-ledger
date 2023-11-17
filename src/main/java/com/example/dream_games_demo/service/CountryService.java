@@ -36,6 +36,13 @@ public class CountryService {
         }
         return allCountries;
     }
+    public Country findCountryById(Long id) {
+        Optional<Country> optionalCountry = countryRepository.findById(id);
+        if(!optionalCountry.isPresent()) {
+            throw new CountryNotFoundException();
+        }
+        return optionalCountry.get();
+    }
     public String generateCountriesLeaderBoard(Long tournament_id){
         List<Rewards> allScoresOfTheTournament = rewardsService.getScoresByTournament(tournament_id);
         List<Country> allCountries = allCountries();
@@ -59,11 +66,7 @@ public class CountryService {
     }
     public String generateCountryLeaderBoard(Long tournament_id, Long country_id) {
         List<Rewards> allScoresOfTheTournament = rewardsService.getScoresByTournament(tournament_id);
-        Optional<Country> optionalCountry = countryRepository.findById(country_id);
-        if(!optionalCountry.isPresent()) {
-            throw new CountryNotFoundException();
-        }
-        Country country = optionalCountry.get();
+        Country country = findCountryById(country_id);
 
         Long total_score_country = 0L;
         Map<String, Long> playersToScoreMap = new HashMap<String, Long>();
