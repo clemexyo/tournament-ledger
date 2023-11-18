@@ -43,6 +43,8 @@ public class Scores {
     }
     public Player getPlayer() { return this.player; }
     public Long getScore() { return this.player_score; }
+    public Tournament getTournament() { return this.tournament; }
+    public TournamentGroup getTournamentGroup() { return this.tournament_group; }
     public void setScore(Long score) { this.player_score = score; }
     public void setLatestUpdateToNow() { this.latest_update = LocalDateTime.now(); }
     public LocalDateTime getLatestUpdate() { return this.latest_update; }

@@ -14,7 +14,7 @@ public interface ScoresRepository extends JpaRepository<Scores, Long> {
     @Query("SELECT r " +
             "FROM Scores r " +
             "WHERE r.tournament_group.id = :tournamentGroupId")
-    Optional<List<Scores>> getAllScoresOfTournament(@Param("tournamentGroupId") Long tournamentGroupId);
+    Optional<List<Scores>> getAllScoresOfTournamentGroup(@Param("tournamentGroupId") Long tournamentGroupId);
 
     @Query("SELECT r FROM Scores r WHERE r.tournament_group.id = :tournamentGroupId AND r.player.id = :playerId")
     Optional<Scores> findByPlayerAndTournamentGroup(@Param("playerId") Long playerId, @Param("tournamentGroupId") Long tournamentGroupId);

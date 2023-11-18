@@ -23,7 +23,7 @@ public class ScoresService {
         scoresRepository.save(score);
     }
     public List<Scores> getAllScoresOfTournament(Long tournament_id){
-        Optional<List<Scores>> optionalScores = scoresRepository.getAllScoresOfTournament(tournament_id);
+        Optional<List<Scores>> optionalScores = scoresRepository.getAllScoresOfTournamentGroup(tournament_id);
         if(!optionalScores.isPresent()) {
             throw new NoScoresFoundException();
         }
