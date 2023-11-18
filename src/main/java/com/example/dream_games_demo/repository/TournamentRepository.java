@@ -12,6 +12,4 @@ import java.util.Optional;
 public interface TournamentRepository extends JpaRepository<Tournament, Long> {
     @Query("SELECT t FROM Tournament t ORDER BY t.id DESC LIMIT 1")
     Optional<Tournament> findTopByOrderByIdDesc();
-
-    Optional<Tournament> findTournamentById(Long id);
 }
