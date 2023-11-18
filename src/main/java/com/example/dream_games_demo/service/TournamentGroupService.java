@@ -100,7 +100,7 @@ public class TournamentGroupService {
         return leaderBoard.toString();
     }
     public TournamentGroup isPlayerInActiveGroup(Long player_id){
-        Optional<TournamentGroup> optionalTournamentGroup = tournamentGroupsRepository.findTournamentGroupByPlayerId(player_id);
+        Optional<TournamentGroup> optionalTournamentGroup = tournamentGroupsRepository.findActiveTournamentGroupByPlayerId(player_id);
         if(optionalTournamentGroup.isPresent()) {
             return optionalTournamentGroup.get();
         }

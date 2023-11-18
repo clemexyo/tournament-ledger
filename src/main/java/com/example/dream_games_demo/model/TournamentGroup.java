@@ -121,6 +121,28 @@ public class TournamentGroup {
     public void setSecond(Player player) { this.second = player; }
     public Player getSecond() { return this.second; }
     public Long getId() { return this.id; }
+    public Tournament getTournament() { return this.tournament; }
+
+    public Player getPlayer1() {
+        return player1;
+    }
+
+    public Player getPlayer2() {
+        return player2;
+    }
+
+    public Player getPlayer3() {
+        return player3;
+    }
+
+    public Player getPlayer4() {
+        return player4;
+    }
+
+    public Player getPlayer5() {
+        return player5;
+    }
+
     public Long getTotal_group_score() { return this.total_group_score; }
     public void setTotal_group_score(Long group_score) { this.total_group_score = group_score; }
 }
