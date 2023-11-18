@@ -25,18 +25,18 @@ public class CountryController {
         String createdCountry = countryService.createCountry(country_name);
         return new ResponseEntity<String>(createdCountry, HttpStatus.CREATED);
     }
-    @GetMapping("/leaderboard/{tournament_id}")
-    public ResponseEntity<String> getCountriesLeaderBoard(@PathVariable(name = "tournament_id") Long tournament_id){
+    @GetMapping("/countries-leaderboard")
+    public ResponseEntity<String> getCountriesLeaderBoard(@RequestParam(name = "tournament_id") Long tournament_id){
         if(tournament_id == null || !(tournament_id instanceof Long)) {
             throw new InvalidGetCountriesLeaderBoardRequestException();
         }
         String countriesLeaderBoard = countryService.generateCountriesLeaderBoard(tournament_id);
         return new ResponseEntity<>(countriesLeaderBoard, HttpStatus.OK);
     }
-    @GetMapping("/leaderboard/{tournament_id}/{country_id}")
+    @GetMapping("/country-leaderboard")
     public ResponseEntity<String> getCountryLeaderBoard(
-            @PathVariable(name = "tournament_id") Long tournament_id,
-            @PathVariable(name = "country_id") Long country_id) {
+            @RequestParam(name = "tournament_id") Long tournament_id,
+            @RequestParam(name = "country_id") Long country_id) {
         if(tournament_id == null || country_id == null){
             throw new InvalidGetCountryLeaderBoardRequestException();
         }

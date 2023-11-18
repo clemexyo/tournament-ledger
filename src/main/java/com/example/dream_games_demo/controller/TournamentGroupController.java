@@ -15,10 +15,10 @@ public class TournamentGroupController {
     @Autowired
     private TournamentGroupService tournamentGroupService;
 
-    @GetMapping("/leader-board/{tournament_id}/{tournament_group_id}")
+    @GetMapping("/leaderboard")
     public ResponseEntity<String> getGroupLeaderBoard(
-            @PathVariable(name = "tournament_id") Long tournament_id,
-            @PathVariable(name = "tournament_group_id") Long tournament_group_id){
+            @RequestParam(name = "tournament_id") Long tournament_id,
+            @RequestParam(name = "tournament_group_id") Long tournament_group_id){
         if(tournament_id == null || tournament_group_id == null){
             throw new InvalidGetLeaderBoardRequestException();
         }
@@ -27,10 +27,10 @@ public class TournamentGroupController {
         String leaderBoard = tournamentGroupService.generateLeaderBoard(tournamentGroup);
         return new ResponseEntity<String>(leaderBoard, HttpStatus.OK);
     }
-    @GetMapping("/player-rank/{player_id}/{tournament_group_id}")
+    @GetMapping("/player-rank")
     public ResponseEntity<String> getPlayerGroupRank(
-            @PathVariable(name = "player_id") Long player_id,
-            @PathVariable(name = "tournament_group_id") Long tournament_group_id) {
+            @RequestParam(name = "player_id") Long player_id,
+            @RequestParam(name = "tournament_group_id") Long tournament_group_id) {
         if(player_id == null || tournament_group_id == null){
             throw new InvalidGetPlayerGroupRankException();
         }
