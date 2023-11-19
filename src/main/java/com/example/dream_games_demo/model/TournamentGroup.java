@@ -47,6 +47,17 @@ public class TournamentGroup {
     public TournamentGroup(){
 
     }
+
+    public TournamentGroup(Tournament tournament, Player player1, Player player2, Player player3, Player player4, Player player5, Long id) {
+        this.tournament = tournament;
+        this.player1 = player1;
+        this.player2 = player2;
+        this.player3 = player3;
+        this.player4 = player4;
+        this.player5 = player5;
+        this.id = id;
+    }
+
     public TournamentGroup(Player player, Tournament latest_tournament){
         if(player1 == null){
             this.player1 = player;

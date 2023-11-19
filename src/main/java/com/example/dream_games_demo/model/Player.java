@@ -34,6 +34,14 @@ public class Player {
         this.level = 1L;
         this.can_enter = true;
     }
+    public Player(Country country, Long level, Long id) { //this constructor is created to make the testing process less painful.
+        this.country = country;
+        this.coins = 5000L;
+        this.level = level;
+        this.can_enter = true;
+        this.user_name = "test";
+        this.id = id;
+    }
 
     public String getUserName() { return this.user_name; }
     public Long getId(){ return this.id; }
