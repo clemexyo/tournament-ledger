@@ -1,6 +1,5 @@
 package com.example.dream_games_demo.model;
-import com.example.dream_games_demo.model.Player;
-import com.example.dream_games_demo.model.Tournament;
+
 import jakarta.persistence.*;
 
 import java.util.ArrayList;

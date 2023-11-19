@@ -231,6 +231,7 @@ class CountryServiceTest {
             String[] expectedLeaderboardLines = expectedLeaderboard.split("\n");
 
             assertAll(
+                    () -> assertTrue(expectedLeaderboardLines.length >= 4),
                     () -> assertTrue(expectedLeaderboardLines[2].contains("20")), //player with score 20 is the leader.
                     () -> assertTrue(expectedLeaderboardLines[3].contains("10")) //player with score 10 is the second.
             );
@@ -260,6 +261,7 @@ class CountryServiceTest {
             String[] expectedLeaderboardLines = expectedLeaderboard.split("\n");
 
             assertAll(
+                    () -> assertTrue(expectedLeaderboardLines.length >= 4),
                     () -> assertTrue(expectedLeaderboardLines[2].contains("6")), //player with id = 6 is the leader.
                     () -> assertTrue(expectedLeaderboardLines[3].contains("1")) //player with id = 1 is the second.
             );
@@ -287,6 +289,7 @@ class CountryServiceTest {
 
             //then
             assertAll(
+                    () -> assertTrue(leaderboardLines.length >= 4),
                     () -> assertTrue(leaderboardLines[2].contains("Turkey")), //the winner is Turkey. Since the first 2 lines are information about the board we are skipping them.
                     () -> assertTrue(leaderboardLines[3].contains("UK"))    //second is UK,
             );
@@ -322,9 +325,9 @@ class CountryServiceTest {
             String expectedLeaderboard = underTest.generateCountriesLeaderBoard(tournament.getId());
             String[] leaderboardLines = expectedLeaderboard.split("\n");
 
-            System.out.println(expectedLeaderboard);
             //then
             assertAll(
+                    () -> assertTrue(leaderboardLines.length >= 4),
                     () -> assertTrue(leaderboardLines[2].contains("UK")),  //the winner is UK. Since the first 2 lines are information about the board we are skipping them.
                     () -> assertTrue(leaderboardLines[3].contains("Turkey"))  //second is Turkey,
             );

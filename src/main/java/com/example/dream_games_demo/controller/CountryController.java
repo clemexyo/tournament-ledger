@@ -23,11 +23,11 @@ public class CountryController {
         }
         String country_name = request.getCountryName();
         String createdCountry = countryService.createCountry(country_name);
-        return new ResponseEntity<String>(createdCountry, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdCountry, HttpStatus.CREATED);
     }
     @GetMapping("/countries-leaderboard")
     public ResponseEntity<String> getCountriesLeaderBoard(@RequestParam(name = "tournament_id") Long tournament_id){
-        if(tournament_id == null || !(tournament_id instanceof Long)) {
+        if(tournament_id == null) {
             throw new InvalidGetCountriesLeaderBoardRequestException();
         }
         String countriesLeaderBoard = countryService.generateCountriesLeaderBoard(tournament_id);

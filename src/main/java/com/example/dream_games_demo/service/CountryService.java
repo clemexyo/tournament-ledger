@@ -22,8 +22,8 @@ public class CountryService {
     @Autowired
     private ScoresService scoresService;
     public String createCountry(String country_name){
+        Country newCountry = new Country(country_name);
         try {
-            Country newCountry = new Country(country_name);
             countryRepository.save(newCountry);
             return newCountry.toString();
         }catch (Exception e){
@@ -39,7 +39,7 @@ public class CountryService {
     }
     public Country findCountryById(Long id) {
         Optional<Country> optionalCountry = countryRepository.findById(id);
-        if(!optionalCountry.isPresent()) {
+        if(optionalCountry.isEmpty()) {
             throw new CountryNotFoundException();
         }
         return optionalCountry.get();
@@ -65,22 +65,22 @@ public class CountryService {
                 }
             }
             CountryToScoreMap.put(currentCountry.getName(),
-                            (total_score_of_current_country.toString() + "%" + latest_update));
+                            (total_score_of_current_country + "%" + latest_update));
         }
         Map<String, String> sortedByScore = sortByValues(CountryToScoreMap);
-        String countriesLeaderBoard = "Countries from highest score to lowest:\n" +
-                "(in case of countries with equal scores, they are sorted with respect to latest score achievement)\n";
+        StringBuilder countriesLeaderBoard = new StringBuilder("Countries from highest score to lowest:\n" +
+                "(in case of countries with equal scores, they are sorted with respect to latest score achievement)\n");
         for(Map.Entry<String, String> entry : sortedByScore.entrySet()) {
-            countriesLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue().split("%")[0] + " ---\n";
+            countriesLeaderBoard.append("--- ").append(entry.getKey()).append(": ").append(entry.getValue().split("%")[0]).append(" ---\n");
         }
-        return countriesLeaderBoard;
+        return countriesLeaderBoard.toString();
     }
     public String generateCountryLeaderBoard(Long tournament_id, Long country_id) {
         List<Scores> allScoresOfTheTournament = scoresService.getScoresByTournament(tournament_id);
         Country country = findCountryById(country_id);
 
         Long total_score_country = 0L;
-        Map<String, String> playersToScoreMap = new HashMap<String, String>();
+        Map<String, String> playersToScoreMap = new HashMap<>();
         for(Scores currentScore : allScoresOfTheTournament) {
             Player currentPlayer = currentScore.getPlayer();
             if(Objects.equals(country.getName(), currentPlayer.getCountry())) {
@@ -92,19 +92,19 @@ public class CountryService {
             }
         }
         Map<String, String> sorted = sortByValues(playersToScoreMap);
-        String countryLeaderBoard = "Total score of " + country.getName() + " is " +
+        StringBuilder countryLeaderBoard = new StringBuilder("Total score of " + country.getName() + " is " +
                 total_score_country + " and its players sorted by the score:\n" +
-                "(in case of players with equal scores, they are sorted with respect to latest score achievement.)\n";
+                "(in case of players with equal scores, they are sorted with respect to latest score achievement.)\n");
         for(Map.Entry<String, String> entry : sorted.entrySet()) {
-            countryLeaderBoard += "--- " + entry.getKey() + ": " + entry.getValue().split("%")[0] + " ---\n";
+            countryLeaderBoard.append("--- ").append(entry.getKey()).append(": ").append(entry.getValue().split("%")[0]).append(" ---\n");
         }
-        return countryLeaderBoard;
+        return countryLeaderBoard.toString();
     }
     // function to sort hashmap by values
     private static Map<String, String> sortByValues(Map<String, String> map) {
         return map.entrySet()
                 .stream()
-                .sorted(Map.Entry.<String, String>comparingByValue(MapValueComparator::compareValues))
+                .sorted(Map.Entry.comparingByValue(MapValueComparator::compareValues))
                 .collect(Collectors.toMap(
                         Map.Entry::getKey,
                         Map.Entry::getValue,
@@ -115,14 +115,14 @@ public class CountryService {
 
     private static class MapValueComparator {
         private static int compareValues(String value1, String value2) {
-            String[] parts1 = value1.split("%");
-            String[] parts2 = value2.split("%");
+            String[] parts1 = value1.split("%"); //5-14:30
+            String[] parts2 = value2.split("%"); //5-15:00
 
             // Parse Long and LocalDateTime components
-            Long longValue1 = Long.parseLong(parts1[0]);
+            long longValue1 = Long.parseLong(parts1[0]);
             LocalDateTime dateTimeValue1 = LocalDateTime.parse(parts1[1], DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
-            Long longValue2 = Long.parseLong(parts2[0]);
+            long longValue2 = Long.parseLong(parts2[0]);
             LocalDateTime dateTimeValue2 = LocalDateTime.parse(parts2[1], DateTimeFormatter.ISO_LOCAL_DATE_TIME);
 
             // Compare first based on Long (descending), then on LocalDateTime (descending)

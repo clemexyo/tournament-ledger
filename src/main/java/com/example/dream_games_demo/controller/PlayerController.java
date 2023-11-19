@@ -2,8 +2,6 @@ package com.example.dream_games_demo.controller;
 
 import com.example.dream_games_demo.exceptions.InvalidCreatePlayerRequestException;
 import com.example.dream_games_demo.exceptions.InvalidUpdatePlayerLevelRequestException;
-import com.example.dream_games_demo.exceptions.NoPlayerFoundException;
-import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.requests.CreatePlayerRequest;
 import com.example.dream_games_demo.requests.UpdatePlayerLevelRequest;
 import com.example.dream_games_demo.service.PlayerService;
@@ -13,8 +11,6 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
 import java.util.List;
-import java.util.Map;
-import java.util.Optional;
 
 @RestController
 @RequestMapping("/api/players")
@@ -26,7 +22,7 @@ public class PlayerController {
     @GetMapping
     public ResponseEntity<List<String>> getAllPlayers(){
         List<String> playersList = playerService.allPlayers();
-        return new ResponseEntity<List<String>>(playersList, HttpStatus.OK);
+        return new ResponseEntity<>(playersList, HttpStatus.OK);
     }
 
     @PostMapping
@@ -36,16 +32,16 @@ public class PlayerController {
         }
         String user_name = request.getUserName();
         String createdPlayer = playerService.createPlayer(user_name);
-        return new ResponseEntity<String>(createdPlayer, HttpStatus.CREATED);
+        return new ResponseEntity<>(createdPlayer, HttpStatus.CREATED);
     }
 
     @PutMapping
     public ResponseEntity<String> updateLevel(@RequestBody UpdatePlayerLevelRequest request){
-        if(request == null || request.getPlayerId() == null || !(request.getPlayerId() instanceof Long)){
+        if(request == null || request.getPlayerId() == null){
             throw new InvalidUpdatePlayerLevelRequestException();
         }
         Long id = request.getPlayerId();
         String player = playerService.updateLevel(id);
-        return new ResponseEntity<String>(player, HttpStatus.OK);
+        return new ResponseEntity<>(player, HttpStatus.OK);
     }
 }

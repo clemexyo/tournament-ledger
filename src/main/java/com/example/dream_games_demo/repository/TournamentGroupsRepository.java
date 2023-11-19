@@ -1,6 +1,5 @@
 package com.example.dream_games_demo.repository;
 
-import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.TournamentGroup;
 import org.springframework.data.jpa.repository.JpaRepository;
 import org.springframework.data.jpa.repository.Query;
@@ -14,10 +13,10 @@ import java.util.Optional;
 public interface TournamentGroupsRepository extends JpaRepository<TournamentGroup, Long> {
 
     @Query("SELECT tg FROM TournamentGroup tg " +
-            "WHERE tg.is_active = false AND tg.tournament.id = :tournament_id AND " +
+            "WHERE tg.is_active = false AND tg.tournament.id = :tournamentId AND " +
             "(tg.player1 IS NULL OR tg.player2 IS NULL OR tg.player3 IS NULL OR tg.player4 IS NULL OR tg.player5 IS NULL) " +
             "ORDER BY tg.id ASC")
-    Optional<List<TournamentGroup>> findPendingTournamentGroups(@Param("tournament_id") Long tournament_id);
+    Optional<List<TournamentGroup>> findPendingTournamentGroups(@Param("tournamentId") Long tournamentId);
 
     @Query("SELECT tg FROM TournamentGroup tg WHERE tg.is_active = true AND " +
             "(tg.player1.id = :player_id OR tg.player2.id = :player_id OR " +
@@ -25,13 +24,13 @@ public interface TournamentGroupsRepository extends JpaRepository<TournamentGrou
     Optional<TournamentGroup> findActiveTournamentGroupByPlayerId(@Param("player_id") Long player_id);
 
     @Query("SELECT tg FROM TournamentGroup tg WHERE tg.tournament.id = :tournamentId")
-    Optional<List<TournamentGroup>> findAllGroupsByTournament(@Param("tournamentId") Long tournament_id);
+    Optional<List<TournamentGroup>> findAllGroupsByTournament(@Param("tournamentId") Long tournamentId);
 
     @Query("SELECT tg FROM TournamentGroup tg WHERE tg.is_active = false AND " +
-            "(tg.player1.id = :player_id OR tg.player2.id = :player_id OR " +
-            "tg.player3.id = :player_id OR tg.player4.id = :player_id OR " +
-            "tg.player5.id = :player_id) " +
+            "(tg.player1.id = :playerId OR tg.player2.id = :playerId OR " +
+            "tg.player3.id = :playerId OR tg.player4.id = :playerId OR " +
+            "tg.player5.id = :playerId) " +
             "ORDER BY tg.id DESC " +
             "LIMIT 1")
-    Optional<TournamentGroup> findLastGroupOfPlayer(@Param("player_id") Long playerId);
+    Optional<TournamentGroup> findLastGroupOfPlayer(@Param("playerId") Long playerId);
 }

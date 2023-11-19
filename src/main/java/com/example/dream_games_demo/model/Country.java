@@ -2,8 +2,6 @@ package com.example.dream_games_demo.model;
 
 import jakarta.persistence.*;
 
-import java.util.List;
-
 @Entity
 @Table(name = "countries")
 public class Country {

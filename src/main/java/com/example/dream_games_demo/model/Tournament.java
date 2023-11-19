@@ -3,7 +3,6 @@ package com.example.dream_games_demo.model;
 import jakarta.persistence.*;
 
 import java.time.LocalDateTime;
-import java.util.Date;
 
 @Entity
 @Table(name = "tournaments")
@@ -21,6 +20,11 @@ public class Tournament {
     public Tournament(){
         this.start_time = LocalDateTime.now();
         this.is_active = true;
+    }
+    public Tournament(Long id){
+        this.start_time = LocalDateTime.now();
+        this.is_active = true;
+        this.id = id;
     }
 
     public Boolean getisActive(){

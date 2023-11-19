@@ -7,7 +7,10 @@ import com.example.dream_games_demo.service.TournamentGroupService;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
-import org.springframework.web.bind.annotation.*;
+import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
+import org.springframework.web.bind.annotation.RestController;
 
 @RestController
 @RequestMapping("/api/tournament-group")
@@ -25,7 +28,7 @@ public class TournamentGroupController {
         TournamentGroup tournamentGroup = tournamentGroupService.findById(tournament_group_id);
 
         String leaderBoard = tournamentGroupService.generateLeaderBoard(tournamentGroup);
-        return new ResponseEntity<String>(leaderBoard, HttpStatus.OK);
+        return new ResponseEntity<>(leaderBoard, HttpStatus.OK);
     }
     @GetMapping("/player-rank")
     public ResponseEntity<String> getPlayerGroupRank(
@@ -34,7 +37,7 @@ public class TournamentGroupController {
         if(player_id == null || tournament_group_id == null){
             throw new InvalidGetPlayerGroupRankException();
         }
-        String player_rank_info = tournamentGroupService.getPlayerGroupRank(player_id, tournament_group_id);
-        return new ResponseEntity<>(player_rank_info, HttpStatus.OK);
+        String playerRankInfo = tournamentGroupService.getPlayerGroupRank(player_id, tournament_group_id);
+        return new ResponseEntity<>(playerRankInfo, HttpStatus.OK);
     }
 }

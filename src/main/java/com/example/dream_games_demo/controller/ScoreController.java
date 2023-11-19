@@ -23,7 +23,7 @@ public class ScoreController {
     private PlayerService playerService;
     @PutMapping
     public ResponseEntity<String> claimReward(@RequestBody ClaimRewardRequest request){
-        if(request == null || request.getPlayerId() == null || !(request.getPlayerId() instanceof  Long)){
+        if(request == null || request.getPlayerId() == null){
             throw new InvalidClaimRewardRequestException();
         }
         Long player_id = request.getPlayerId();

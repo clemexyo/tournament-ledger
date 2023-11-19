@@ -9,7 +9,9 @@ import com.example.dream_games_demo.repository.TournamentRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.scheduling.annotation.Scheduled;
 import org.springframework.stereotype.Service;
-import java.util.*;
+
+import java.util.List;
+import java.util.Optional;
 
 @Service
 public class TournamentService {
@@ -64,7 +66,7 @@ public class TournamentService {
     }
     private Tournament findLatestTournament() {
         Optional<Tournament> optionalTournament = tournamentRepository.findTopByOrderByIdDesc();
-        if(!optionalTournament.isPresent()) {
+        if(optionalTournament.isEmpty()) {
             throw new TournamentNotFoundException();
         }
         return optionalTournament.get();

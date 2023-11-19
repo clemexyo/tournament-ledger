@@ -1,7 +1,6 @@
 package com.example.dream_games_demo.service;
 
 import com.example.dream_games_demo.exceptions.NoTournamentGroupFoundException;
-import com.example.dream_games_demo.exceptions.RewardNotFoundException;
 import com.example.dream_games_demo.exceptions.UnableToAddPlayerToGroupException;
 import com.example.dream_games_demo.model.Player;
 import com.example.dream_games_demo.model.Scores;
@@ -11,6 +10,7 @@ import com.example.dream_games_demo.repository.PlayerRepository;
 import com.example.dream_games_demo.repository.TournamentGroupsRepository;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+
 import java.util.List;
 import java.util.Optional;
 
@@ -30,7 +30,6 @@ public class TournamentGroupService {
         TournamentGroup to_return = null;
         try{
             TournamentGroup tournamentGroup = new TournamentGroup(player, latest_tournament);
-            //playerService.playerEnteredGroup(player.getId());
             player.setCan_enter(false);
             player.payToEnter();
             tournamentGroupsRepository.save(tournamentGroup);
@@ -86,7 +85,8 @@ public class TournamentGroupService {
         if(!tournamentGroup.isFull()){
             leaderBoard.append("The group is not full.\n");
         }
-        leaderBoard.append("Players from highest score to lowest:\n");
+        leaderBoard.append("Players from highest score to lowest:\n")
+                .append("(in case of players with equal scores, they are sorted with respect to latest score achievement.)\n");
         for(Scores currentReward: scoresOrderedByPlayerScore){
             Long player_id = currentReward.getPlayer().getId();
             String player_name = currentReward.getPlayer().getUserName();
@@ -101,10 +101,7 @@ public class TournamentGroupService {
     }
     public TournamentGroup isPlayerInActiveGroup(Long player_id){
         Optional<TournamentGroup> optionalTournamentGroup = tournamentGroupsRepository.findActiveTournamentGroupByPlayerId(player_id);
-        if(optionalTournamentGroup.isPresent()) {
-            return optionalTournamentGroup.get();
-        }
-        return null;
+        return optionalTournamentGroup.orElse(null);
     }
     public List<TournamentGroup> findAllGroupsOfTournament(Long tournament_id) {
         Optional<List<TournamentGroup>> optionalGroups = tournamentGroupsRepository.findAllGroupsByTournament(tournament_id);
@@ -212,15 +209,42 @@ public class TournamentGroupService {
         }
     }
     private void setWinnerAndSecond(List<Scores> orderedRewards, TournamentGroup tournamentGroup){
-        Long first_score = orderedRewards.get(0).getScore();
-        Long second_score = orderedRewards.get(1).getScore();
-        if(first_score == 0) { //this means nobody played the game.
+        List<Scores> filtered = orderedRewards.stream().filter(score -> score.getScore() > 0).toList();
+
+        if(filtered.isEmpty()){ //this means all scores were 0 which indicates nobody played the game. Thus, nobody gets to win any prize. Everybody leaves the group.
             tournamentGroup.setWinner(null);
             tournamentGroup.setSecond(null);
             orderedRewards.get(0).getPlayer().setCan_enter(true);
             orderedRewards.get(1).getPlayer().setCan_enter(true);
             playerRepository.save(orderedRewards.get(0).getPlayer());
             playerRepository.save(orderedRewards.get(1).getPlayer());
+        }
+        else if(filtered.size() == 1){ //this means only one person played the game. that person is the winner and others do not get any prize, they will leave the game.
+            Player winner = filtered.get(0).getPlayer();
+            tournamentGroup.setWinner(winner);
+
+            Player otherPlayer = orderedRewards.get(1).getPlayer();
+            otherPlayer.setCan_enter(true);
+            playerRepository.save(otherPlayer);
+        }
+        else { //this means we have both a valid winner and second. filtered.size() == 2
+            Player winner = filtered.get(0).getPlayer();
+            Player second = filtered.get(1).getPlayer();
+
+            tournamentGroup.setWinner(winner);
+            tournamentGroup.setSecond(second);
+        }
+        tournamentGroupsRepository.save(tournamentGroup);
+    }
+}
+
+
+/*Long first_score = orderedRewards.get(0).getScore();
+        Long second_score = orderedRewards.get(1).getScore();
+        if(first_score == 0) { //this means nobody played the game.
+            tournamentGroup.setWinner(null);
+            tournamentGroup.setSecond(null);
+
         }
         else {
             tournamentGroup.setWinner(orderedRewards.get(0).getPlayer());
@@ -235,7 +259,4 @@ public class TournamentGroupService {
                 playerRepository.save(second);
             }
 
-        }
-        tournamentGroupsRepository.save(tournamentGroup);
-    }
-}
+        }*/
