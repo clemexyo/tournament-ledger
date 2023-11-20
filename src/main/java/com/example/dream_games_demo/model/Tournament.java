@@ -30,6 +30,7 @@ public class Tournament {
     public Boolean getisActive(){
         return this.is_active;
     }
+    public void setIsActive(boolean updated) { this.is_active = updated; }
     public Long getId() { return this.id; }
 
     public void endTournament(){

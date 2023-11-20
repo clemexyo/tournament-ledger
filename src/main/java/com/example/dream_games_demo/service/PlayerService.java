@@ -90,10 +90,10 @@ public class PlayerService {
     }
     public void claimReward(Player player){
         TournamentGroup tournamentGroup = tournamentGroupService.findLastGroupOfPlayer(player.getId());
-        if(Objects.equals(player.getId(), tournamentGroup.getWinner().getId())){
+        if(Objects.nonNull(tournamentGroup.getWinner()) && Objects.equals(player.getId(), tournamentGroup.getWinner().getId())){
             player.getWinnerPrize();
         }
-        else if(Objects.equals(player.getId(), tournamentGroup.getSecond().getId())){
+        else if(Objects.nonNull(tournamentGroup.getSecond()) && Objects.equals(player.getId(), tournamentGroup.getSecond().getId())){
             player.getSecondPrize();
         }
         else{

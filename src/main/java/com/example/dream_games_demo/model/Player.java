@@ -45,6 +45,7 @@ public class Player {
 
     public String getUserName() { return this.user_name; }
     public Long getId(){ return this.id; }
+    public void setId(Long id) { this.id = id; }
     public void setCountry(Country country){
         this.country = country;
     }

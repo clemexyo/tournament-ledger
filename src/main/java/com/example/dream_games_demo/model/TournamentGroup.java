@@ -131,6 +131,7 @@ public class TournamentGroup {
     public void setSecond(Player player) { this.second = player; }
     public Player getSecond() { return this.second; }
     public Long getId() { return this.id; }
+    public void setId(Long id) { this.id = id; }
     public Tournament getTournament() { return this.tournament; }
 
     public Player getPlayer1() {

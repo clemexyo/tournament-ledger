@@ -22,6 +22,11 @@ public class TournamentService {
     @Autowired
     private TournamentGroupService tournamentGroupService;
 
+    public Tournament createTournament(){
+        Tournament tournament = new Tournament();
+        tournamentRepository.save(tournament);
+        return tournament;
+    }
     public Tournament tournamentStatus(){
         Tournament tournament = findLatestTournament(); //throws TournamentNotFoundException is there's no tournament.
         if(tournament.getisActive()){

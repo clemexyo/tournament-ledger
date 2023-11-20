@@ -50,7 +50,7 @@ public class ScoresService {
         total_group_score += 1;
         tournamentGroup.setTotal_group_score(total_group_score);
     }
-    private Scores findByPlayerAndTournamentGroup(Long player_id, Long tournament_group_id) {
+    public Scores findByPlayerAndTournamentGroup(Long player_id, Long tournament_group_id) {
         Optional<Scores> optionalScores = scoresRepository.findByPlayerAndTournamentGroup(player_id, tournament_group_id);
         if(optionalScores.isEmpty()) {
             throw new NoScoresFoundException();
